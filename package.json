@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "^pnpm@7.9.4",
+  "prisma": {
+    "schema": "packages/db/prisma/schema.prisma"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "release": "pnpm run db:push && pnpm run build",
+    "build:api": "turbo run build --scope=api",
+    "build:web": "turbo run build --scope=web",
+    "build:lib": "turbo run build --filter='./packages/*'",
+    "dev": "turbo run build --filter='./packages/*' && turbo run dev --parallel",
+    "dev:api": "turbo run build --filter='./packages/*' && turbo run dev --parallel --filter='./apps/api' --filter='./packages/*'",
+    "dev:web": "turbo run dev --continue --scope=web",
+    "dev:lib": "turbo run dev --filter='./packages/*' --parallel",
+    "generate": "turbo run generate",
+    "db:push": "turbo run db:push",
+    "start:node": "pnpm run start:node --filter web"
+  },
+  "devDependencies": {
+    "patch-package": "^6.4.7",
+    "turbo": "^1.4.3"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@sveltejs/adapter-vercel@1.0.0-next.73": "patches/@sveltejs__adapter-vercel@1.0.0-next.73.patch"
+    }
+  }
+}

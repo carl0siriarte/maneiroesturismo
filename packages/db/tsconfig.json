@@ -1,0 +1,14 @@
+{
+  "extends": "@pkg/tsconfig/node16.json",
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
+    "esModuleInterop": true
+  }
+}

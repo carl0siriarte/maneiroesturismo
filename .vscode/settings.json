@@ -1,0 +1,4 @@
+{
+  "svelte.plugin.css.diagnostics.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

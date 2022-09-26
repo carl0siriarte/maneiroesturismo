@@ -1,0 +1,13 @@
+{
+  "name": "@pkg/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "base.json",
+    "node16.json"
+  ],
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
+}

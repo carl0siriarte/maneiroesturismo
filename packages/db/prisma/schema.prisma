@@ -1,0 +1,258 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
+  binaryTargets   = ["debian-openssl-1.1.x", "linux-musl"]
+}
+
+datasource db {
+  provider             = "sqlite"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  id          String        @id @unique @default(uuid())
+  email       String        @unique
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  accounts    Account[]
+  PlaceMember PlaceMember[]
+}
+
+model Tourist {
+  id        String @id @unique @default(uuid())
+  email     String
+  firstName String
+  lastName  String
+
+  accounts Account[]
+  place    Place?    @relation(fields: [placeId], references: [id])
+  placeId  String?
+
+  createdAt DateTime  @default(now())
+  Comment   Comment[]
+
+  @@unique([email, placeId])
+}
+
+model Account {
+  id       String  @id @unique @default(uuid())
+  provider String
+  secret   String?
+
+  tourist   Tourist? @relation(fields: [touristId], references: [id])
+  touristId String?
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@unique([provider, touristId])
+  @@unique([provider, userId])
+}
+
+model Place {
+  id String @id @default(uuid())
+
+  name String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  slug         String  @unique
+  customDomain String? @unique
+
+  logo     String?
+  favicon  String?
+  tourists Tourist[]
+
+  Tag            Tag[]
+  PlaceMember    PlaceMember[]
+  PlaceEvent     PlaceEvent[]
+  PlaceShortPost PlaceShortPost[]
+}
+
+model PlaceEvent {
+  id        String  @id @default(uuid())
+  thumbnail String?
+  content   String?
+  place     Place   @relation(fields: [placeId], references: [id])
+  slug      String
+  placeId   String
+
+  date DateTime
+
+  createdAt      DateTime         @default(now())
+  PlaceShortPost PlaceShortPost[]
+
+  @@unique([placeId, slug])
+}
+
+model PlaceShortPost {
+  id        String  @id @default(uuid())
+  thumbnail String?
+  content   String
+  place     Place   @relation(fields: [placeId], references: [id])
+  slug      String
+  placeId   String
+
+  event PlaceEvent? @relation(fields: [placeEventId], references: [id])
+
+  createdAt          DateTime             @default(now())
+  placeEventId       String?
+  TagsOnShortPost    TagsOnShortPost[]
+  CommentOnShortPost CommentOnShortPost[]
+
+  @@unique([placeId, slug])
+}
+
+model PlaceMember {
+  place  Place @relation(fields: [placeId], references: [id])
+  member User  @relation(fields: [memberId], references: [id])
+
+  placeId  String
+  memberId String
+
+  role String @default("normal") // owner | admin | normal
+
+  @@id([memberId, placeId])
+}
+
+model Tag {
+  id String @id @default(uuid())
+
+  name String
+
+  place           Place             @relation(fields: [placeId], references: [id])
+  placeId         String
+  TagsOnShortPost TagsOnShortPost[]
+
+  @@unique([name, placeId])
+}
+
+model TagsOnShortPost {
+  tag              Tag            @relation(fields: [tagId], references: [id])
+  post             PlaceShortPost @relation(fields: [placeShortPostId], references: [id])
+  tagId            String
+  placeShortPostId String
+
+  @@id([placeShortPostId, tagId])
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  author    Tourist? @relation(fields: [touristId], references: [id])
+  touristId String?
+
+  content String
+
+  createdAt          DateTime             @default(now())
+  CommentOnShortPost CommentOnShortPost[]
+}
+
+model CommentOnShortPost {
+  comment          Comment        @relation(fields: [commentId], references: [id])
+  post             PlaceShortPost @relation(fields: [placeShortPostId], references: [id])
+  commentId        String
+  placeShortPostId String
+
+  @@id([placeShortPostId, commentId])
+}
+
+// model Category {
+//   id    String @id @default(uuid())
+//   place Place  @relation(fields: [placeId], references: [id])
+//   name  String
+
+//   placeId String
+
+//   @@unique([name, placeId])
+// }
+
+// model CategoriesOnProducts {
+//   product    Product         @relation(fields: [productId], references: [id])
+//   category   ProductCategory @relation(fields: [categoryId], references: [id])
+//   productId  String
+//   categoryId String
+
+//   @@id([productId, categoryId])
+// }
+
+// model TagsOnProducts {
+//   product      Product    @relation(fields: [productId], references: [id])
+//   tag          ProductTag @relation(fields: [productTagId], references: [id])
+//   productId    String
+//   productTagId String
+
+//   @@id([productId, productTagId])
+// }
+
+// enum OrderStatus {
+//   paid
+//   processing
+//   pending
+// }
+
+// enum FulfillmentStatus {
+//   fulfilled
+//   unfulfilled
+//   partially_fulfilled
+//   awaiting_shipment
+//   scheduled
+//   on_hold
+// }
+
+// model Order {
+//   id    String      @id @default(uuid())
+//   items OrderItem[]
+//   fees  OrderFee[]
+
+//   token String?
+
+//   status            OrderStatus       @default(pending)
+//   fulfillmentStatus FulfillmentStatus @default(unfulfilled)
+//   total             Float             @default(0)
+
+//   billingData  Json?
+//   shippingData Json?
+
+//   place   Place  @relation(fields: [placeId], references: [id])
+//   placeId String
+
+//   paymentMethods Json?
+
+//   createdAt DateTime @default(now())
+
+//   tourist   Tourist? @relation(fields: [touristId], references: [id])
+//   touristId String?
+// }
+
+// model OrderItem {
+//   id String @id @default(uuid())
+
+//   cost      Float @default(0)
+//   basePrice Float @default(0)
+//   fulfilled Int   @default(0)
+//   quantity  Int
+
+//   order   Order?  @relation(fields: [orderId], references: [id])
+//   orderId String?
+
+//   productId String
+// }
+
+// model OrderFee {
+//   id String @id @default(uuid())
+
+//   name String
+
+//   fixed      Float @default(0)
+//   percentage Float @default(0)
+
+//   order   Order?  @relation(fields: [orderId], references: [id])
+//   orderId String?
+// }

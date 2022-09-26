@@ -1,0 +1,40 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "pnpm build && node build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/autoload": "^5.2.0",
+    "@fastify/cookie": "^8.0.0",
+    "@fastify/cors": "^8.1.0",
+    "@fastify/jwt": "^6.3.2",
+    "@fastify/session": "^9.0.0",
+    "@pkg/db": "workspace:*",
+    "@pkg/trpc": "workspace:^1.0.0",
+    "@trpc/server": "^9.25.3",
+    "fastify": "^4.5.2",
+    "fastify-cookie": "^5.7.0",
+    "fastify-cors": "^6.1.0",
+    "fastify-plugin": "^4.2.0",
+    "svelte-kit-cookie-session": "^3.0.6",
+    "trpc": "^0.11.3",
+    "trpc-transformer": "^2.0.2",
+    "vite": "3.0.8",
+    "vite-plugin-node": "^1.0.0",
+    "zod": "^3.17.3"
+  },
+  "devDependencies": {
+    "@pkg/tsconfig": "workspace:*",
+    "@types/node": "^18.7.1",
+    "esbuild": "^0.15.5",
+    "nodemon": "^2.0.19",
+    "typescript": "^4.7.4"
+  }
+}
