@@ -36,6 +36,9 @@ RUN pnpx turbo run build --scope=api
 
 FROM node:alpine AS runner
 
+EXPOSE 3000
+VOLUME /mnt/data
+
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
@@ -54,9 +57,6 @@ RUN mkdir -p /data /mnt/data
 WORKDIR /app
 
 COPY --from=installer /app .
-
-EXPOSE 3000
-VOLUME /mnt/data
 
 RUN DATABASE_URL=file:/mnt/data/db npx prisma migrate deploy
 
