@@ -10,7 +10,7 @@
   {#key $page.routeId}
     <div
       class="flex-grow flex flex-col h-full p-4 lg:px-[5%]"
-      in:fade|local={{ duration: 400, easing: expoOut }}
+      in:fade|local={{ duration: 200 }}
     >
       <slot />
     </div>

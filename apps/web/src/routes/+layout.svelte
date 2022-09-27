@@ -20,14 +20,14 @@
     showSpinner: false,
   })
 
-  $: {
-    if ($navigating) {
-      NProgress.start()
-    }
-    if (!$navigating) {
-      NProgress.done()
-    }
-  }
+  // $: {
+  //   if ($navigating) {
+  //     NProgress.start()
+  //   }
+  //   if (!$navigating) {
+  //     NProgress.done()
+  //   }
+  // }
 
   onDestroy(() => {
     if (!$navigating) {

@@ -2,12 +2,11 @@
   import { page } from '$app/stores'
   import { pageContext } from '$lib'
   import { tooltip } from '$lib/components/tooltip'
-  import Searchbar from '$lib/__place/Searchbar.svelte'
   import { Copy16 } from 'carbon-icons-svelte'
 </script>
 
 <div
-  class="flex flex-col min-h-screen space-y-4 p-4 text-dark-900 items-center justify-center dark:text-gray-100"
+  class="flex flex-col flex-grow space-y-4 p-4 text-dark-900 items-center justify-center dark:text-gray-100"
   class:-m-4={$pageContext.layout === 'app'}
   class:lg:-m-6={$pageContext.layout === 'app'}
 >

@@ -3,8 +3,8 @@
   import trpc from '$lib/trpc/client'
   import type { InferMutationInput } from '@pkg/trpc'
   import { Add24, NewTab24 } from 'carbon-icons-svelte'
-  import { expoOut } from 'svelte/easing'
-  import { slide } from 'svelte/transition'
+  import { elasticOut, expoOut } from 'svelte/easing'
+  import { scale, slide } from 'svelte/transition'
 
   let error: Error | undefined
 
@@ -33,6 +33,8 @@
 <div class="flex flex-grow h-full w-full items-center justify-center">
   <div
     class="bg-white border rounded-xl flex flex-col border-gray-300 p-4 items-center dark:bg-dark-700 dark:border-dark-100"
+    style="will-change: transform"
+    in:scale={{ duration: 400, start: 0.9, easing: elasticOut }}
   >
     <form
       class="flex flex-col space-y-4 w-full transition-opacity duration-400"
@@ -60,7 +62,7 @@
           class="bg-white border rounded border-gray-300 text-sm leading-tight w-full py-2 px-3 appearance-none dark:bg-dark-700 dark:border-dark-100 focus:outline-none focus:shadow-outline"
           type="text"
           autocomplete="off"
-          placeholder="Ej. Municipio Mariño"
+          placeholder="Ej. Municipio Maneiro"
           bind:value={place.name}
           required
         />

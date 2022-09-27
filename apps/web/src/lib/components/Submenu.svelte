@@ -5,6 +5,7 @@
 
   export let y: 'bottom' | 'top' = 'bottom'
   export let x: 'left' | 'right' = 'right'
+  export let fullWidth = false
 </script>
 
 <div class="wrapper relative {y}">
@@ -18,12 +19,13 @@
     >
   </slot>
   <div
-    class="transform {x == 'left'
+    class="transform flex {x == 'left'
       ? 'origin-top-left left-0'
       : 'origin-top-right right-0'} pt-2 z-50 translate-0 absolute body !duration-200"
+    class:min-w-full={fullWidth}
   >
     <div
-      class="bg-white border rounded border-gray-300 shadow p-2 dark:bg-dark-800 dark:border-dark-100"
+      class="bg-white border rounded border-gray-300 w-full p-2 dark:bg-dark-800 dark:border-dark-100"
     >
       <slot name="body" />
     </div>

@@ -52,7 +52,7 @@
 
 <LoginLayout>
   <div class="flex mb-2 w-full items-center justify-between">
-    <h2 class="font-black font-title text-lg text-dark-900 dark:text-white">
+    <h2 class="font-bold font-title text-lg text-dark-900 dark:text-white">
       {!isLogin ? 'Regístrate' : 'Inicia sesión'}
     </h2>
     <button

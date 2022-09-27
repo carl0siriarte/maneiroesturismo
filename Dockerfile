@@ -55,9 +55,6 @@ WORKDIR /app
 
 COPY --from=installer /app .
 
-RUN npm i -g pnpm
-RUN DATABASE_URL=file:/mnt/data/db pnpx prisma db push --skip-generate
-
 EXPOSE 3000
 
 ENTRYPOINT "litefs"

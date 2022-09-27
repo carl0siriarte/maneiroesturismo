@@ -1,4 +1,5 @@
 <script>
+  import Logo from '$lib/Logo.svelte'
   import { UserAvatarFilled32 } from 'carbon-icons-svelte'
 
   export let avatar = true
@@ -11,9 +12,9 @@
     class="bg-white rounded-xl flex flex-col shadow-xl p-4 items-center dark:bg-dark-800"
   >
     {#if avatar}
-      <UserAvatarFilled32
-        class="h-48px mb-2 text-dark-500 w-48px dark:text-white"
-      />
+      <div class="mb-6">
+        <Logo />
+      </div>
     {/if}
     <slot />
   </div>

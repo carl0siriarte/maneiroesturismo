@@ -1,10 +1,11 @@
 <script lang="ts">
   import { browser } from '$app/environment'
+  import { onMount } from 'svelte'
 
   let className = ''
   export let style = ''
   export { className as class }
-  export let intersecting = false
+  export let intersecting = true
   export let oneWay = false
   export let threshold = 0
 
@@ -13,6 +14,10 @@
         'Lighthouse|Google Page Speed Insights|Googlebot'
       )
     : true
+
+  onMount(() => {
+    intersecting = false
+  })
 
   const viewport = (node: HTMLDivElement) => {
     const observer = new IntersectionObserver(

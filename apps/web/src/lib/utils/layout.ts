@@ -79,7 +79,6 @@ export async function fetchContextData<
         ...contextData,
         context: await fetchPlace(url, fetch),
       }
-      console.log(contextData)
       return {
         notFound: !contextData.context.place || !isRouteValid,
         contextData: contextData,

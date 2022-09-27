@@ -17,16 +17,15 @@ export const load: LayoutLoad = async ({ url, fetch, params }) => {
     throw error(404, 'Página no encontrada')
   }
 
-  if (
-    !user &&
-    contextData.layout == 'app' &&
-    !url.pathname.startsWith('/login')
-  ) {
-    throw redirect(
-      303,
-      `/login?callbackUrl=${encodeURIComponent(url.pathname)}`
-    )
+  if (contextData.layout == 'app') {
+    if (!user && !url.pathname.startsWith('/login')) {
+      throw redirect(
+        303,
+        `/login?callbackUrl=${encodeURIComponent(url.pathname)}`
+      )
+    }
   }
+
   return {
     user,
     notFound,
