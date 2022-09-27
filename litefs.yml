@@ -1,8 +1,8 @@
 # The path to where the SQLite database will be accessed.
-mount-dir: '/sqlite-db'
+mount-dir: '/sqlite'
 
 # The path to where the underlying volume mount is.
-data-dir: '/mnt/sqlite-db'
+data-dir: '/mnt/sqlite'
 
 # Execute this subprocess once LiteFS connects to the cluster.
 exec: 'npx prisma migrate deploy && node apps/api/dist/index.js'
