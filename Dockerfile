@@ -58,4 +58,6 @@ COPY --from=installer /app .
 EXPOSE 3000
 VOLUME /mnt/data
 
+RUN DATABASE_URL=file:/mnt/data/db npx prisma migrate deploy
+
 ENTRYPOINT "litefs"
