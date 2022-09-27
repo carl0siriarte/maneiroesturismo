@@ -39,9 +39,6 @@ FROM node:alpine AS runner
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
-# Ensure our mount & data directories exists before mounting with LiteFS.
-RUN mkdir -p /data /mnt/data
-
 # Copy binaries from the previous build stages.
 COPY --from=litefs /usr/local/bin/litefs /usr/local/bin/litefs
 
@@ -56,22 +53,11 @@ RUN mkdir -p /data /mnt/data
 
 WORKDIR /app
 
-# Don't run production as root
-# RUN addgroup --system --gid 1001 maneiroesturismo.com
-# RUN adduser --system --uid 1001 maneiroesturismo.com
-# USER maneiroesturismo.com
 COPY --from=installer /app .
 
 RUN npm i -g pnpm
-RUN pnpx prisma db push --skip-generate
+RUN DATABASE_URL=file:/mnt/data/db pnpx prisma db push --skip-generate
 
 EXPOSE 3000
 
 ENTRYPOINT "litefs"
-
-# CMD if [[ ! -z "$SWAP" ]]; then \
-#     fallocate -l $(($(stat -f -c "(%a*%s/10)*7" .))) _swapfile && \
-#     mkswap _swapfile && swapon _swapfile && ls -hla; \
-#     fi; \
-#     free -m; \
-#     node apps/api/dist/index.js
