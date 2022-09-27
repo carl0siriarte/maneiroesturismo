@@ -1,5 +1,5 @@
 # Fetch the LiteFS binary using a multi-stage build.
-FROM flyio/litefs:pr-109 AS litefs
+FROM flyio/litefs:pr-115 AS litefs
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:alpine AS installer
@@ -56,5 +56,6 @@ WORKDIR /app
 COPY --from=installer /app .
 
 EXPOSE 3000
+VOLUME /mnt/data
 
 ENTRYPOINT "litefs"
