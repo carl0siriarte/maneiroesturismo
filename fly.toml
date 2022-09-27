@@ -9,7 +9,7 @@ processes = []
 
 [mounts]
   source="maneiroesturismo"
-  destination="/data"
+  destination="/mnt/data"
 
 [experimental]
   allowed_public_ports = []
