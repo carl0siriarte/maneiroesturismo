@@ -1,11 +1,11 @@
 # The path to where the SQLite database will be accessed.
-mount-dir: '/data'
+mount-dir: '/sqlite-db'
 
 # The path to where the underlying volume mount is.
-data-dir: '/mnt/data'
+data-dir: '/mnt/sqlite-db'
 
 # Execute this subprocess once LiteFS connects to the cluster.
-exec: 'node apps/api/dist/index.js'
+exec: 'DATABASE_URL=file:/sqlite-db/db npx prisma migrate deploy && node apps/api/dist/index.js'
 
 # These environment variables will be available in your Fly.io application.
 # You must specify "experiement.enable_consul" for FLY_CONSUL_URL to be available.

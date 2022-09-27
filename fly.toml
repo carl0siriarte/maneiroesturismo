@@ -8,8 +8,8 @@ processes = []
 [env]
 
 [mounts]
-  source="maneiroesturismo"
-  destination="/mnt/data"
+  source="sqlite"
+  destination="/mnt/sqlite-db"
 
 [experimental]
   allowed_public_ports = []

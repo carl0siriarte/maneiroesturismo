@@ -37,7 +37,7 @@ RUN pnpx turbo run build --scope=api
 FROM node:alpine AS runner
 
 EXPOSE 3000
-VOLUME /mnt/data
+VOLUME /mnt/sqlite-db
 
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
@@ -52,14 +52,10 @@ ADD litefs.yml /etc/litefs.yml
 RUN apk add bash curl fuse sqlite
 
 # Ensure our mount & data directories exists before mounting with LiteFS.
-RUN mkdir -p /data /mnt/data
+RUN mkdir -p /sqlite-db /mnt/sqlite-db
 
 WORKDIR /app
 
 COPY --from=installer /app .
-
-RUN ls -lh /mnt/data
-
-RUN DATABASE_URL=file:/mnt/data/db npx prisma migrate deploy
 
 ENTRYPOINT "litefs"
