@@ -1,5 +1,5 @@
 # The path to where the SQLite database will be accessed.
-mount-dir: '/mnt/litefs/db'
+mount-dir: '/litefs/db'
 
 # The path to where the underlying volume mount is.
 data-dir: '/mnt/litefs'
