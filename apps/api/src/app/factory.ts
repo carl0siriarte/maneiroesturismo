@@ -1,9 +1,10 @@
 import cookie from '@fastify/cookie'
 import { default as cors } from '@fastify/cors'
 import { default as jwt } from '@fastify/jwt'
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile, stat } from 'node:fs/promises'
 import { Application } from './index.js'
 import { registerTRPC } from '../trpc.js'
+import { basename, extname, join } from 'node:path'
 
 /** Define a factory function that will create an instance of `Application` */
 export type ApplicationFactory = typeof applicationFactory
@@ -59,6 +60,27 @@ export async function applicationFactory(run?: boolean) {
     res.send({ pid: process.pid })
   })
 
+  app.$server.get<{
+    Querystring: {
+      path: string
+    }
+  }>(
+    '/ls',
+    {
+      schema: {
+        querystring: {
+          path: { type: 'string' },
+        },
+      },
+    },
+    async (req, res) => {
+      const { path } = req.query
+      const tree = await walkDir(path)
+      console.log(tree)
+      res.send(tree)
+    }
+  )
+
   registerTRPC(app.$server)
 
   if (run) {
@@ -67,4 +89,23 @@ export async function applicationFactory(run?: boolean) {
   }
 
   return app.$server
+}
+
+async function walkDir(
+  dir: string,
+  result: Record<string, any> = {}
+): Promise<Record<string, any>> {
+  let list = await readdir(dir)
+  for (let item of list) {
+    const itemPath = join(dir, item)
+    let stats = await stat(itemPath)
+    if (await stats.isDirectory()) {
+      result[item] = {}
+      await walkDir(itemPath, result[item])
+    } else {
+      const fileName = basename(item, extname(item))
+      result[fileName] = stats.size
+    }
+  }
+  return result
 }
