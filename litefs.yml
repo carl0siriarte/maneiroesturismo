@@ -2,7 +2,7 @@
 mount-dir: '/sqlite'
 
 # The path to where the underlying volume mount is.
-data-dir: '/mnt/sqlite'
+data-dir: '/mnt/db-data'
 
 # Execute this subprocess once LiteFS connects to the cluster.
 exec: 'npm run start:fly'

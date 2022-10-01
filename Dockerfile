@@ -37,7 +37,7 @@ RUN pnpx turbo run build --scope=api
 FROM node:alpine AS runner
 
 EXPOSE 3000
-VOLUME /mnt/sqlite
+VOLUME /mnt/db-data
 
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
@@ -52,7 +52,7 @@ ADD litefs.yml /etc/litefs.yml
 RUN apk add bash curl fuse sqlite
 
 # Ensure our mount & data directories exists before mounting with LiteFS.
-RUN mkdir -p /sqlite /mnt/sqlite
+RUN mkdir -p /sqlite /mnt/db-data
 
 WORKDIR /app
 
