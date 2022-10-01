@@ -1,5 +1,5 @@
 export const load = () => {
   return {
-    title: 'Account settings',
+    title: 'Configuración de la cuenta',
   }
 }

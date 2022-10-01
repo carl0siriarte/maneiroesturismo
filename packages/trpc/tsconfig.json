@@ -1,14 +1,15 @@
 {
   "extends": "@pkg/tsconfig/node16.json",
-  "include": ["src/**/*.ts", "tsup.config.ts"],
+  "include": ["tsup.config.ts", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": ".",
     "rootDir": ".",
+    "esModuleInterop": true,
     "paths": {
-      "@pkg/trpc": ["./dist/index"]
-    },
-    "esModuleInterop": true
+      "@pkg/trpc": ["./dist/index"],
+      "@trpc/server/*": ["../../node_modules/@trpc/server/*"]
+    }
   }
 }

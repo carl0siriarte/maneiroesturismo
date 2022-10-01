@@ -1,29 +1,33 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { createRouter } from '../shared.js'
+import { procedure, t } from '../router.js'
 import type { MailDataRequired } from '@sendgrid/mail'
 import { utils } from '@pkg/shared'
 import * as db from '@pkg/db'
+import type { Tourist } from '@pkg/db'
 
-const lostPassword = createRouter()
-  .query('checkPasswordRecoveryToken', {
-    input: z.object({
-      token: z.string(),
-      placeId: z.string(),
-    }),
-    resolve: async ({ input, ctx }) => {
+const passwordRecovery = t.router({
+  checkToken: procedure
+    .input(
+      z.object({
+        token: z.string(),
+        placeId: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
       const key = `customers:passwordsTokens:${input.placeId}:${input.token}`
       const email = await ctx.redis.get<string>(key)
       return { ok: email != null }
-    },
-  })
-  .mutation('recoverPassword', {
-    input: z.object({
-      newPassword: z.string().min(6),
-      token: z.string(),
-      placeId: z.string(),
     }),
-    resolve: async ({ input, ctx }) => {
+  changePassword: procedure
+    .input(
+      z.object({
+        newPassword: z.string().min(6),
+        token: z.string(),
+        placeId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       const { token, newPassword, placeId } = input
       const key = `customers:passwordsTokens:${placeId}:${token}`
       const email = await ctx.redis.get<string>(key)
@@ -39,14 +43,15 @@ const lostPassword = createRouter()
         newPassword,
       })
       await ctx.redis.del(key)
-    },
-  })
-  .mutation('issuePasswordRecoveryToken', {
-    input: z.object({
-      email: z.string().email(),
-      placeId: z.string(),
     }),
-    resolve: async ({ input, ctx }) => {
+  issueToken: procedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        placeId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       const tourist = await db.prisma.tourist.findUnique({
         where: {
           email_placeId: input,
@@ -70,11 +75,12 @@ const lostPassword = createRouter()
       const url = utils.getAbsoluteURL({
         path: `/login/recover?token=${token}`,
       })
+      const place = await db.getPlace({ id: input.placeId })
       const msg: MailDataRequired = {
         to: input.email,
         from: {
-          name: 'Maneiro es Turismo',
-          email: `no-reply@maneiroesturismo.com.com`,
+          name: `${place?.name} | Maneiro es Turismo`,
+          email: `${place?.slug}@maneiroesturismo.com`,
         },
 
         headers: {
@@ -89,24 +95,27 @@ const lostPassword = createRouter()
           <p>Si no has sido tú quien hizo esta petición, por favor ignora este correo.</p>
           <br>
           <p>Gracias,</p>
-          <p>El equipo de __NOMBRE__</p>`,
+          <p>${place?.name} a través de Maneiro es Turismo</p>`,
       }
       // await sendgrid.send(msg)
-    },
-  })
-
-export default createRouter()
-  .mutation('register', {
-    input: z.object({
-      tourist: z.object({
-        email: z.string().email(),
-        firstName: z.string(),
-        lastName: z.string(),
-      }),
-      placeId: z.string(),
-      password: z.string().min(6),
     }),
-    resolve: async ({ ctx, input: { tourist, password, placeId } }) => {
+})
+
+export default t.router({
+  passwordRecovery,
+  register: procedure
+    .input(
+      z.object({
+        tourist: z.object({
+          email: z.string().email(),
+          firstName: z.string(),
+          lastName: z.string(),
+        }),
+        placeId: z.string(),
+        password: z.string().min(6),
+      })
+    )
+    .mutation(async ({ input: { tourist, password, placeId }, ctx }) => {
       try {
         const registered = await db.registerTourist({
           placeId,
@@ -122,15 +131,16 @@ export default createRouter()
           message: err.message,
         })
       }
-    },
-  })
-  .mutation('login', {
-    input: z.object({
-      email: z.string().email(),
-      password: z.string().min(6),
-      placeId: z.string(),
     }),
-    resolve: async ({ ctx, input: { email, password, placeId } }) => {
+  login: procedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string().min(6),
+        placeId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input: { email, password, placeId } }) => {
       try {
         const tourist = await db.loginTourist({
           email,
@@ -145,15 +155,13 @@ export default createRouter()
           message: err.message,
         })
       }
-    },
-  })
-  .query('whoami', {
-    resolve: async ({ ctx }) => {
-      return await db.prisma.tourist.findUnique({
+    }),
+  whoami: procedure.query(
+    async ({ ctx }) =>
+      (await db.prisma.tourist.findUnique({
         where: {
           id: ctx.touristId || '',
         },
-      })
-    },
-  })
-  .merge(lostPassword)
+      })) as Tourist | null
+  ),
+})

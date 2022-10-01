@@ -1,7 +1,5 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { pageContext } from '$lib/stores'
-  import trpc from '$lib/trpc/client'
   import { Search16 } from 'carbon-icons-svelte'
 
   let search = ''

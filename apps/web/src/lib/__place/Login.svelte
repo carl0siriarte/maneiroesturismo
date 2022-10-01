@@ -2,8 +2,7 @@
   import { page } from '$app/stores'
   import { notifications } from '$lib/components/notifications'
   import { pageContext } from '$lib/stores'
-  import trpc from '$lib/trpc/client'
-  import { api } from '@pkg/shared'
+  import { trpc } from '$lib/trpc/client'
   import { onMount } from 'svelte'
   import { expoOut } from 'svelte/easing'
   import { derived } from 'svelte/store'
@@ -47,20 +46,20 @@
         //   password,
         //   layoutData: $layoutData,
         // })
-        await trpc().mutation('tourist:login', {
+        await trpc.tourists.login.mutate({
           email: email?.toLocaleLowerCase(),
           password,
-          placeId: $pageContext.place?.id!,
+          placeId: $pageContext.context.place?.id!,
         })
       } else {
-        await trpc().mutation('tourist:register', {
+        await trpc.tourists.register.mutate({
           tourist: {
             email: email?.toLocaleLowerCase(),
             firstName,
             lastName,
           },
           password,
-          placeId: $pageContext.place?.id!,
+          placeId: $pageContext.context.place?.id!,
         })
       }
       const callbackUrl = decodeURI(

@@ -1,6 +1,6 @@
 {
   "extends": "@pkg/tsconfig/node16.json",
-  "include": ["src/**/*.ts", "node_modules/"],
+  "include": ["src/**/*.ts", "node_modules/", "vite.config.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "types": ["vite/client"]

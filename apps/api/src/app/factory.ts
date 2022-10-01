@@ -1,13 +1,9 @@
-import { router, tRPCContext } from '@pkg/trpc'
 import cookie from '@fastify/cookie'
 import { default as cors } from '@fastify/cors'
 import { default as jwt } from '@fastify/jwt'
 import { readFile } from 'node:fs/promises'
-import {
-  CreateFastifyContextOptions,
-  fastifyTRPCPlugin,
-} from '../trpc-adapter/plugin.js'
 import { Application } from './index.js'
+import { registerTRPC } from '../trpc.js'
 
 /** Define a factory function that will create an instance of `Application` */
 export type ApplicationFactory = typeof applicationFactory
@@ -63,50 +59,7 @@ export async function applicationFactory(run?: boolean) {
     res.send({ pid: process.pid })
   })
 
-  app.$server.register(fastifyTRPCPlugin, {
-    prefix: '/trpc',
-    trpcOptions: {
-      router,
-      createContext: async ({
-        req,
-        res,
-      }: CreateFastifyContextOptions): Promise<tRPCContext> => {
-        return {
-          ip: req.ip,
-          session: {
-            auth: async (options) => {
-              let ids: Partial<Record<'userId' | 'touristId', string>> = {}
-              let decoded: any
-              try {
-                decoded = await req.jwtVerify()
-              } catch (err) {
-                if (
-                  !err.code ||
-                  (options?.verify && err.code.startsWith('FST_JWT'))
-                )
-                  throw err
-              }
-              if (decoded?.id && decoded?.type) {
-                ids[decoded.type === 'user' ? 'userId' : 'touristId'] =
-                  decoded.id
-              }
-              return ids
-            },
-            setUser: async (id: string) => {
-              const token = await res.jwtSign({ id, type: 'user' })
-              res.header('x-access-token', token)
-              return token
-            },
-            setTourist: async (id: string) => {
-              const token = await res.jwtSign({ id, type: 'tourist' })
-              res.header('x-access-token', token)
-              return token
-            },
-          },
-        }
-      },
-    },
-  })
+  registerTRPC(app.$server)
 
   if (run) {
     const url = await app.listen()

@@ -1,14 +1,20 @@
 import { Prisma, prisma } from 'src/prisma.js'
+import * as sj from 'superjson'
 import type {
   Overwrite,
   Page,
   Place,
+  PlaceData,
   PlaceMemberRole,
   TrimProps,
 } from 'src/types.js'
+import { defaultPlaceData } from 'src/utils/index.js'
 
 export type CreatePlaceInput = {
-  place: TrimProps<Place, 'createdAt' | 'id' | 'updatedAt'>
+  place: TrimProps<
+    Place,
+    'createdAt' | 'id' | 'updatedAt' | 'logo' | 'coverImage'
+  >
   userOwnerId: string
 }
 
@@ -27,6 +33,41 @@ export async function createPlace({
       },
     },
   })
+}
+
+export type UpsertPlaceDataInput = {
+  placeId: string
+  placeData: PlaceData
+}
+
+export async function upsertPlaceData({
+  placeId,
+  placeData,
+}: UpsertPlaceDataInput) {
+  const data = sj.stringify(placeData)
+  const { data: upsert } = await prisma.placeData.upsert({
+    where: {
+      placeId,
+    },
+    create: {
+      placeId,
+      data,
+    },
+    update: {
+      data,
+    },
+  })
+  return sj.parse<PlaceData>(upsert)
+}
+
+export async function getPlaceData(placeId: string) {
+  const placeData = await prisma.placeData.findUnique({
+    where: {
+      placeId,
+    },
+  })
+  if (!placeData) return defaultPlaceData
+  return sj.parse<PlaceData>(placeData.data)
 }
 
 export type UpdatePlaceInput = Overwrite<
@@ -105,14 +146,20 @@ export type GetPlaceInput = Partial<Record<'slug' | 'host' | 'id', string>>
 
 export async function getPlace({
   id,
-  host,
   slug,
 }: GetPlaceInput): Promise<Place | null> {
   return await prisma.place.findUnique({
     where: {
       id,
       slug,
-      customDomain: host,
+    },
+  })
+}
+
+export async function deletePlace(id: string) {
+  await prisma.place.delete({
+    where: {
+      id,
     },
   })
 }

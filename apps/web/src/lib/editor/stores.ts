@@ -9,7 +9,7 @@ export type CommandProps = {
 export type Item = {
   title: string
   subtitle: string
-  icon?: SvelteComponent
+  icon?: new (args: { target: any; props?: any }) => SvelteComponent
   command: (props: CommandProps) => void
 }
 

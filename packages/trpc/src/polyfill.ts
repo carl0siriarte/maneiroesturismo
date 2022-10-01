@@ -1,4 +1,4 @@
-import { File, FormData, Headers, Request, Response, fetch } from 'undici'
+import { FormData, Headers, Request, Response, fetch } from 'undici'
 import { ReadableStream, TransformStream, WritableStream } from 'stream/web'
 import { webcrypto as crypto } from 'crypto'
 

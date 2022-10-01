@@ -6,8 +6,18 @@
 
   import { pageContext, preferences } from '$lib/stores'
   import { api } from '@pkg/shared'
-  import { Logout16, Moon24, Settings16, Sun24 } from 'carbon-icons-svelte'
-  import { elasticOut, expoOut } from 'svelte/easing'
+  import {
+    Logout16,
+    Moon24,
+    Settings16,
+    Sun24,
+    Home16,
+    UserMultiple16,
+    UserAccess16,
+    UserProfile16,
+    UserCertification16,
+  } from 'carbon-icons-svelte'
+  import { expoOut } from 'svelte/easing'
   import { slide } from 'svelte/transition'
   import PlaceDropdown from './PlaceDropdown.svelte'
 
@@ -17,15 +27,18 @@
   const placeLinks = [
     {
       href: '',
-      title: 'Dashboard',
-    },
-    {
-      href: '/posts',
-      title: 'Publicaciones',
+      icon: Home16,
+      title: 'Feed',
     },
     {
       href: '/members',
+      icon: UserMultiple16,
       title: 'Miembros',
+    },
+    {
+      href: '/settings',
+      icon: Settings16,
+      title: 'Configuración',
     },
   ]
 </script>
@@ -73,7 +86,7 @@
       </Submenu>
       <button
         on:click={() => ($preferences.darkMode = !$preferences.darkMode)}
-        class="flex relative hover:text-black dark:hover:text-white"
+        class="flex text-gray-400 relative hover:text-black dark:hover:text-white"
         title="Cambiar tema"
         use:tooltip
         style="width: 24px; height: 24px"
@@ -99,9 +112,14 @@
           : $page.url.pathname.startsWith(href)}
         <a
           {href}
-          class="border-transparent font-bold border-b-2 text-sm hover:border-current"
-          class:border-current={active}>{link.title}</a
+          class="border-transparent flex font-bold space-x-2 border-b-2 text-sm text-xs pb-1 duration-200 items-center hover:border-current"
+          class:border-current={active}
         >
+          {#if link.icon}
+            <svelte:component this={link.icon} />
+          {/if}
+          <span>{link.title}</span>
+        </a>
       {/each}
     </div>
   {/if}
@@ -109,7 +127,7 @@
 
 <style>
   header {
-    @apply flex flex-col space-y-3 bg-gray-100 bg-opacity-50 w-full p-3 top-0 left-0 z-80 sticky backdrop-filter backdrop-blur-lg;
+    @apply flex flex-col space-y-3 bg-gray-100 bg-opacity-75 w-full p-3 top-0 left-0 z-80 sticky backdrop-filter backdrop-blur-lg;
     @apply border-b border-gray-300;
   }
 

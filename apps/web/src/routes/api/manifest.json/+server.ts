@@ -1,16 +1,18 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 import { useCaravaggioBuilder } from '$lib/components/caravaggio/useCaravaggio'
-import trpc from '$lib/trpc/client'
 import type { Place } from '@pkg/db'
-import { fetchPlace } from '$lib/utils/layout'
+import { fetchPlaceFromURL } from '$lib/utils/layout'
+import { createTRPCClient } from '$lib/trpc/client'
 
 export const GET: RequestHandler = async (event) => {
   let layout = event.locals.layoutType
   const imageBuilder = useCaravaggioBuilder(event.url.origin)
   let place: Place | null = null
   if (layout === 'place') {
-    place = (await fetchPlace(event.url))?.place
+    place =
+      (await fetchPlaceFromURL(event.url, createTRPCClient(fetch, true)))
+        ?.place || null
   }
   const icon = place?.favicon || '/images/logo.svg'
   const iconsRes = [36, 48, 72, 96, 144, 192, 256, 384, 512]

@@ -30,7 +30,7 @@ model Tourist {
   lastName  String
 
   accounts Account[]
-  place    Place?    @relation(fields: [placeId], references: [id])
+  place    Place?    @relation(fields: [placeId], references: [id], onDelete: Cascade)
   placeId  String?
 
   createdAt DateTime  @default(now())
@@ -44,10 +44,10 @@ model Account {
   provider String
   secret   String?
 
-  tourist   Tourist? @relation(fields: [touristId], references: [id])
+  tourist   Tourist? @relation(fields: [touristId], references: [id], onDelete: Cascade)
   touristId String?
 
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
 
   @@unique([provider, touristId])
@@ -57,22 +57,29 @@ model Account {
 model Place {
   id String @id @default(uuid())
 
-  name String?
+  name String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  slug         String  @unique
-  customDomain String? @unique
+  slug String @unique
 
-  logo     String?
-  favicon  String?
-  tourists Tourist[]
+  logo       String?
+  coverImage String?
+  tourists   Tourist[]
 
   Tag            Tag[]
   PlaceMember    PlaceMember[]
   PlaceEvent     PlaceEvent[]
   PlaceShortPost PlaceShortPost[]
+  PlaceData      PlaceData?
+}
+
+model PlaceData {
+  id      String @id @default(uuid())
+  data    String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId String @unique
 }
 
 model PlaceEvent {
@@ -95,7 +102,7 @@ model PlaceShortPost {
   id        String  @id @default(uuid())
   thumbnail String?
   content   String
-  place     Place   @relation(fields: [placeId], references: [id])
+  place     Place   @relation(fields: [placeId], references: [id], onDelete: Cascade)
   slug      String
   placeId   String
 
@@ -110,8 +117,8 @@ model PlaceShortPost {
 }
 
 model PlaceMember {
-  place  Place @relation(fields: [placeId], references: [id])
-  member User  @relation(fields: [memberId], references: [id])
+  place  Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  member User  @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   placeId  String
   memberId String

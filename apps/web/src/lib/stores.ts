@@ -4,13 +4,13 @@ import { writable, get } from 'svelte/store'
 import { page } from '$app/stores'
 import { goto } from '$app/navigation'
 import * as sj from 'superjson'
-import trpc from './trpc/client'
+import { trpc } from './trpc/client'
 import { Redis } from '@upstash/redis'
 import {
   PUBLIC_UPSTASH_REDIS_TOKEN,
   PUBLIC_UPSTASH_REDIS_URL,
 } from '$env/static/public'
-import type { PageContext, Place, PlaceData, Tourist } from '@pkg/db'
+import type { PageContext, Place, PlaceData, Tourist, User } from '@pkg/db'
 
 const redis = new Redis({
   url: PUBLIC_UPSTASH_REDIS_URL,
@@ -215,11 +215,9 @@ const createTouristStore = (): TouristStore => {
         return
       }
 
-      trpc()
-        .query('tourist:whoami')
-        .then((c) => {
-          set(c)
-        })
+      trpc.tourists.whoami.query().then((c) => {
+        set(c)
+      })
     },
     undefined
   )
@@ -234,6 +232,55 @@ const createTouristStore = (): TouristStore => {
 
 export const tourist = createTouristStore()
 
+export type UserStore = Readable<User | null | undefined> & {
+  invalidate(): void
+}
+
+const createUserStore = (): UserStore => {
+  const tick = writable(Symbol())
+  const store = derived<[typeof tick, typeof page], User | null | undefined>(
+    [tick, page],
+    ([_, $page], set) => {
+      if (!browser) {
+        set(null)
+        return
+      }
+
+      if ($page.data.user) {
+        set($page.data.user)
+      } else {
+        trpc.users.whoami.query().then((c) => {
+          set(c)
+        })
+      }
+    },
+    undefined
+  )
+
+  return {
+    ...store,
+    invalidate: () => {
+      tick.set(Symbol())
+    },
+  }
+}
+
+export const user = createUserStore()
+
+const defaultPlaceData: PlaceData = {
+  theme: {
+    primary: '#000',
+  },
+  information: {
+    nodes: [
+      {
+        content: '',
+        type: 'text',
+      },
+    ],
+  },
+}
+
 export const createPageContextStore = ({
   initialState,
   editable,
@@ -243,68 +290,33 @@ export const createPageContextStore = ({
   editable?: boolean
   place?: Place
 }): Writable<PlaceData> => {
-  const defaultData: PlaceData = {
-    header: {
-      links: [],
-    },
-    announcementBar: {
-      background: '#00FFF4',
-      text: 'Create a Custom Text Decal',
-      href: '/products',
-      visible: true,
-    },
-    theme: {
-      primary: '#5D2847',
-    },
-    footer: {
-      submit: {
-        title: 'Stay In The Loop',
-        text: `Become a Decals Hut Insider and get 10% off your order today. Plus we'll keep you up-to-date with the latest designs.`,
-      },
-      links: [
-        {
-          title: 'Home',
-          href: '/',
-        },
-      ],
-      appendix: {
-        title: 'Secure Checkout',
-        text: 'We use encrypted SSL security to ensure that your credit card information is 100% protected.',
-        img: 'https://cdn.shopify.com/s/files/1/0263/8249/9885/t/2/assets/ff-checkout-single.png?v=151997186021135005011631037864',
-      },
-    },
-  }
+  const defaultData: PlaceData = defaultPlaceData
   const placeStore = writable<PlaceData>({
-    header: {
-      ...(defaultData.header || {}),
-      ...(initialState?.header || {}),
-    },
-    announcementBar: {
-      ...(defaultData.announcementBar || {}),
-      ...(initialState?.announcementBar || {}),
+    information: {
+      ...(defaultData.information || {}),
+      ...(initialState?.information || {}),
     },
     theme: {
       ...defaultData.theme,
       ...(initialState?.theme || {}),
     },
-    footer: {
-      ...defaultData.footer,
-      ...(initialState?.footer || {}),
-      appendix: {
-        ...defaultData.footer.appendix,
-        ...(initialState?.footer?.appendix || {}),
-      },
-      submit: {
-        ...defaultData.footer.submit,
-        ...(initialState?.footer?.submit || {}),
-      },
-    },
   })
+  let abort: AbortController | undefined
   const set = (value: PlaceData) => {
+    abort?.abort()
+    abort = new AbortController()
     placeStore.set(value)
     if (!browser) return
     if (editable && place) {
-      redis.set(`placeData:${place.id}`, sj.stringify(value))
+      trpc.places.placeData.upsert.mutate(
+        {
+          placeId: place.id,
+          placeData: value,
+        },
+        {
+          signal: abort?.signal,
+        }
+      )
     }
   }
   return {

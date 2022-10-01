@@ -151,6 +151,19 @@ export async function listUsers({
       {
         OR: [
           {
+            id: {
+              contains: filter,
+            },
+          },
+          {
+            PlaceMember: {
+              some: {
+                placeId,
+                role: { contains: filter },
+              },
+            },
+          },
+          {
             name: {
               contains: filter,
             },

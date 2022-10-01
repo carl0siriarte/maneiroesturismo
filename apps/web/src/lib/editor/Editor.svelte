@@ -84,38 +84,11 @@
 
 <div class="editor relative">
   {#if isEmpty}
-    <p class="font-bold opacity-50 absolute">Type '/' for commands.</p>
+    <p class="font-bold opacity-50 absolute">
+      Escribe '/' para ver los comandos.
+    </p>
   {/if}
   <div bind:this={element} on:keydown|capture={handleKeydown} />
 </div>
 
 <CommandList {selectedIndex} />
-
-<style>
-  .editor :global(a) {
-    @apply cursor-pointer text-blue-400;
-  }
-  .editor :global(a:hover) {
-    text-decoration: underline;
-  }
-
-  .editor :global(h1),
-  .editor :global(h2),
-  .editor :global(h3) {
-    @apply font-bold font-title;
-  }
-
-  .editor :global(h1) {
-    @apply text-2xl;
-  }
-  .editor :global(h2) {
-    @apply text-xl;
-  }
-  .editor :global(h3) {
-    @apply text-lg;
-  }
-
-  .editor :global(ul) {
-    @apply list-disc pl-6;
-  }
-</style>

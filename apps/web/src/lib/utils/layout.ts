@@ -1,4 +1,4 @@
-import trpc from '$lib/trpc/client'
+import { createTRPCClient, type TRPCClient } from '$lib/trpc/client'
 import type { LoadEvent } from '@sveltejs/kit'
 import { getDefaultHost, isCanonical } from './host'
 import { intersection } from 'lodash-es'
@@ -43,21 +43,17 @@ export function validateLayoutRoute<T extends { url: URL }>(
   }
 }
 
-export async function fetchPlace(
+export async function fetchPlaceFromURL(
   url: URL,
-  fetch?: LoadEvent['fetch']
+  trpc?: TRPCClient
 ): Promise<PlaceContext> {
+  trpc = trpc || createTRPCClient(fetch)
   const subdomain = url.host.split('.')[0]
-  const rest = url.host.substring(subdomain.length + 1)
-  console.log(subdomain, rest)
-  if (!getDefaultHost().includes(rest)) {
-    return (await trpc(fetch).query('places:get', { host: url.host })) || {}
-  } else {
-    let slug = url.searchParams.get('__place') || subdomain || null
-    if (slug) {
-      return (await trpc(fetch).query('places:get', { slug: subdomain })) || {}
-    }
+  let slug = url.searchParams.get('__place') || subdomain || null
+  if (slug) {
+    return (await trpc.places.get.query({ slug: subdomain })) || {}
   }
+
   return {}
 }
 
@@ -73,18 +69,20 @@ export async function fetchContextData<
   }
   let isRouteValid = validateLayoutRoute({ url })
 
+  const trpc = createTRPCClient(fetch)
+
   switch (contextData.layout) {
     case 'place':
       contextData = {
         ...contextData,
-        context: await fetchPlace(url, fetch),
+        context: await fetchPlaceFromURL(url, trpc),
       }
       return {
         notFound: !contextData.context.place || !isRouteValid,
         contextData: contextData,
       }
     case 'app':
-      const places = await trpc(fetch).query('user:places', {
+      const places = await trpc.users.places.query({
         pageSize: 10,
         orderBy: {
           createdAt: 'desc',
@@ -121,7 +119,7 @@ export async function getSvelteLayoutComponent(contextData: PageContext) {
           .default as any
       } else {
         layoutComponent = // @ts-ignore
-          (await import('$lib/__layouts/DecalshutLayout.svelte')).default as any
+          (await import('$lib/__layouts/PlaceLayout.svelte')).default as any
       }
       break
   }

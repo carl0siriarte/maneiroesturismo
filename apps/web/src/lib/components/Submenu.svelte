@@ -21,7 +21,7 @@
   <div
     class="transform flex {x == 'left'
       ? 'origin-top-left left-0'
-      : 'origin-top-right right-0'} pt-2 z-50 translate-0 absolute body !duration-200"
+      : 'origin-top-right right-0'} z-50 translate-0 absolute body !duration-200"
     class:min-w-full={fullWidth}
   >
     <div
@@ -40,10 +40,12 @@
   }
   .bottom .body {
     top: 100%;
+    @apply pt-2;
   }
 
   .top .body {
     bottom: 100%;
+    @apply pb-2;
   }
 
   .wrapper:not(:hover) > .body {

@@ -1,28 +1,24 @@
 import type { PageLoad } from './$types'
-import trpc from '$lib/trpc/client'
 import { redirect } from '@sveltejs/kit'
+import { createTRPCClient } from '$lib/trpc/client'
 
 export const load: PageLoad = async ({ fetch, parent, url }) => {
-  const { contextData, user } = await parent()
-  const client = trpc(fetch)
+  const { user, contextData } = await parent()
+  const client = createTRPCClient(fetch)
   switch (contextData.layout) {
     case 'app':
       if (user) {
-        const user = await client.query('user:whoami')
-        if (user) {
-          throw redirect(302, '/')
-        }
+        throw redirect(302, '/')
       }
       return {
         loginPage: (await import('$lib/__app/Login.svelte')).default,
       }
     case 'place':
-      const tourist = await client.query('tourist:whoami')
-      if (tourist) {
+      if (await client.users.whoami.query()) {
         throw redirect(302, '/')
       }
       return {
-        loginPage: (await import('$lib/__place/Login.svelte')).default,
+        loginPage: (await import('$lib/__app/Login.svelte')).default,
       }
   }
 }

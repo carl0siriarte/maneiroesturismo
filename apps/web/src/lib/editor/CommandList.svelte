@@ -29,16 +29,16 @@
     use:portal
   />
   <div
-    class="bg-white border rounded max-w-full border-gray-300 shadow max-h-72 w-96 z-999 absolute overflow-auto dark:bg-gray-800 dark:border-gray-600"
+    class="bg-white border rounded max-w-full border-gray-300 shadow max-h-72 w-96 z-999 absolute overflow-auto dark:bg-dark-800 dark:border-dark-100"
     use:portal
     transition:fly|local={{ duration: 200, y: 5, easing: expoOut }}
     bind:clientHeight={wrapperHeight}
     style="left: {$slashLocaltion.x}px; top: {invert
-      ? $slashLocaltion.y - $slashLocaltion.height - 384
+      ? $slashLocaltion.y - $slashLocaltion.height - 288
       : $slashLocaltion.y + $slashLocaltion.height}px;"
   >
     <div
-      class="bg-white font-bold text-sm p-2 top-0 left-0 text-slate-500 sticky uppercase dark:bg-gray-800"
+      class="bg-white font-bold text-sm p-2 top-0 left-0 text-slate-500 sticky uppercase dark:bg-dark-800"
     >
       Blocks
     </div>
@@ -46,8 +46,8 @@
       {#each $slashItems as { title, subtitle, command, icon }, i (title)}
         <div
           class="p-3 cursor-pointer {i == selectedIndex
-            ? 'bg-gray-200 dark:bg-gray-700'
-            : 'bg-white dark:bg-gray-800'}"
+            ? 'bg-gray-200 dark:bg-dark-400'
+            : 'bg-white dark:bg-dark-800'}"
           transition:slide|local={{ duration: 200, easing: expoOut }}
           on:mouseenter={() => (selectedIndex = i)}
           on:click={() => {

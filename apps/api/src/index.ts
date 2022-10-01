@@ -1,5 +1,5 @@
 import { ClusterApplication } from './app/cluster.js'
-import { applicationFactory, type ApplicationFactory } from './app/factory.js'
+import { applicationFactory } from './app/factory.js'
 
 const DEV = !import.meta.env.PROD
 

@@ -1,10 +1,5 @@
 lockfileVersion: 5.4
 
-patchedDependencies:
-  '@sveltejs/adapter-vercel@1.0.0-next.73':
-    hash: hag6giyb7m6qti3ixblpof6dnq
-    path: patches/@sveltejs__adapter-vercel@1.0.0-next.73.patch
-
 importers:
 
   .:
@@ -25,7 +20,7 @@ importers:
       '@pkg/db': workspace:*
       '@pkg/trpc': workspace:^1.0.0
       '@pkg/tsconfig': workspace:*
-      '@trpc/server': ^9.25.3
+      '@trpc/server': 10.0.0-proxy-beta.8
       '@types/node': ^18.7.1
       esbuild: ^0.15.5
       fastify: ^4.5.2
@@ -48,7 +43,7 @@ importers:
       '@fastify/session': 9.0.0
       '@pkg/db': link:../../packages/db
       '@pkg/trpc': link:../../packages/trpc
-      '@trpc/server': 9.27.1
+      '@trpc/server': 10.0.0-proxy-beta.8
       fastify: 4.5.2
       fastify-cookie: 5.7.0
       fastify-cors: 6.1.0
@@ -84,8 +79,7 @@ importers:
       '@tiptap/extension-list-item': ^2.0.0-beta.23
       '@tiptap/starter-kit': ^2.0.0-beta.191
       '@tiptap/suggestion': ^2.0.0-beta.97
-      '@trpc/client': ^9.25.3
-      '@trpc/server': ^9.25.3
+      '@trpc/client': 10.0.0-proxy-beta.9
       '@upstash/redis': ^1.6.1
       '@windicss/plugin-animations': ^1.0.9
       '@windicss/plugin-icons': ^1.0.2
@@ -149,8 +143,7 @@ importers:
       '@tiptap/extension-list-item': 2.0.0-beta.23_jdrcmhoxj44u3cq7gnenksjiqq
       '@tiptap/starter-kit': 2.0.0-beta.191
       '@tiptap/suggestion': 2.0.0-beta.97_jdrcmhoxj44u3cq7gnenksjiqq
-      '@trpc/client': 9.27.1_@trpc+server@9.27.1
-      '@trpc/server': 9.27.1
+      '@trpc/client': 10.0.0-proxy-beta.9
       '@upstash/redis': 1.12.0_encoding@0.1.13
       carbon-icons-svelte: 10.45.1
       cookie: 0.5.0
@@ -277,7 +270,7 @@ importers:
       '@pkg/shared': workspace:^1.0.0
       '@pkg/tsconfig': workspace:*
       '@sendgrid/mail': ^7.7.0
-      '@trpc/server': ^9.25.3
+      '@trpc/server': 10.0.0-proxy-beta.8
       '@upstash/redis': ^1.6.1
       bee-queue: ^1.4.0
       bullmq: ^1.89.2
@@ -292,11 +285,12 @@ importers:
       tsup: ^6.2.2
       typescript: ^4.7.4
       undici: ^5.10.0
+      zod: ^3.17.3
     dependencies:
       '@pkg/db': link:../db
       '@pkg/shared': link:../shared
       '@sendgrid/mail': 7.7.0
-      '@trpc/server': 9.27.1
+      '@trpc/server': 10.0.0-proxy-beta.8
       '@upstash/redis': 1.12.0
       bee-queue: 1.4.0
       bullmq: 1.89.2
@@ -308,6 +302,7 @@ importers:
       redis: 4.2.0
       stripe: 9.16.0
       undici: 5.10.0
+      zod: 3.18.0
     devDependencies:
       '@pkg/tsconfig': link:../tsconfig
       dotenv: 16.0.1
@@ -1177,17 +1172,14 @@ packages:
       prosemirror-view: 1.26.2
     dev: false
 
-  /@trpc/client/9.27.1_@trpc+server@9.27.1:
-    resolution: {integrity: sha512-srh3s1ekhV5fssqxdE5DagcW+bnWUXp4LWkuHTunPDUL5BaIs6l0FXE4wKMv9AFAcCw7xJOFx8VSwFl/raXqKQ==}
+  /@trpc/client/10.0.0-proxy-beta.9:
+    resolution: {integrity: sha512-bCj79s+z3UHfxxBMX40jS1g/satQamWgu3Ge+K+Szt435xi8IenuNshV54jk7VB0XpXXOUpqCY4pRrM8XG0PgA==}
     peerDependencies:
-      '@trpc/server': 9.27.1
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@trpc/server': 9.27.1
+      '@trpc/server': 10.0.0-proxy-beta.9
     dev: false
 
-  /@trpc/server/9.27.1:
-    resolution: {integrity: sha512-r/Fg3DuuYhIvXx5ZSmQ+VVyeV8kZ+N5aa6B7KkDg5wY+o7c1kDygCl+ZJ8XgwNg+yM2JPXPZxetWmyUw/YvWNQ==}
+  /@trpc/server/10.0.0-proxy-beta.8:
+    resolution: {integrity: sha512-JSKA9f+nV5Mu3Yczbm3iWfu1S94Yj/xM6pjp/P0kCdtyKBm9qqoMsxpx6Qf6LISGKNYA/uV2LdFln2Xdw4T8Lg==}
     dev: false
 
   /@trysound/sax/0.2.0:

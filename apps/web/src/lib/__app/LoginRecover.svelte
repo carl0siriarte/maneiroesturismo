@@ -1,8 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { squareratio } from '$lib/actions/aspectratio'
-  import { notifications } from '$lib/components/notifications'
-  import trpc from '$lib/trpc/client'
+  import { trpc } from '$lib/trpc/client'
   import { CheckmarkFilled32 } from 'carbon-icons-svelte'
   import { onMount } from 'svelte'
   import { elasticOut, expoOut } from 'svelte/easing'
@@ -31,12 +30,12 @@
             cause: 'INEQUALSPWD',
           })
         }
-        await trpc().mutation('user:recoverPassword', {
+        await trpc.users.passwordRecovery.changePassword.mutate({
           newPassword: form,
           token,
         })
       } else {
-        await trpc().mutation('user:issuePasswordRecoveryToken', {
+        await trpc.users.passwordRecovery.issueToken.mutate({
           email: form,
         })
       }

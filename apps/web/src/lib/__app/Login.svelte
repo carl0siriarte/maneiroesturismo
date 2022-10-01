@@ -1,7 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { notifications } from '$lib/components/notifications'
-  import trpc from '$lib/trpc/client'
+  import { trpc } from '$lib/trpc/client'
   import { onMount } from 'svelte'
   import { expoOut } from 'svelte/easing'
   import { slide } from 'svelte/transition'
@@ -26,12 +25,14 @@
         }
       }
       if (isLogin) {
-        await trpc().mutation('user:login', {
-          email: email?.toLocaleLowerCase(),
-          password,
+        await trpc.users.login.mutate({
+          user: {
+            email: email?.toLocaleLowerCase(),
+            password,
+          },
         })
       } else {
-        await trpc().mutation('user:register', {
+        await trpc.users.register.mutate({
           user: {
             email: email?.toLocaleLowerCase(),
             name,

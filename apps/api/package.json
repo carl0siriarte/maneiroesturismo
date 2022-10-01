@@ -18,7 +18,7 @@
     "@fastify/session": "^9.0.0",
     "@pkg/db": "workspace:*",
     "@pkg/trpc": "workspace:^1.0.0",
-    "@trpc/server": "^9.25.3",
+    "@trpc/server": "10.0.0-proxy-beta.8",
     "fastify": "^4.5.2",
     "fastify-cookie": "^5.7.0",
     "fastify-cors": "^6.1.0",

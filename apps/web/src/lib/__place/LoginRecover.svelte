@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { squareratio } from '$lib/actions/aspectratio'
   import { pageContext } from '$lib/stores'
-  import trpc from '$lib/trpc/client'
+  import { trpc } from '$lib/trpc/client'
   import { CheckmarkFilled32 } from 'carbon-icons-svelte'
   import { onMount } from 'svelte'
   import { elasticOut, expoOut } from 'svelte/easing'
@@ -30,15 +30,15 @@
             cause: 'INEQUALSPWD',
           })
         }
-        await trpc().mutation('tourist:recoverPassword', {
+        await trpc.tourists.passwordRecovery.changePassword.mutate({
           newPassword: form,
           token,
-          placeId: $pageContext.place?.id || '',
+          placeId: $pageContext.context.place?.id || '',
         })
       } else {
-        await trpc().mutation('tourist:issuePasswordRecoveryToken', {
+        await trpc.tourists.passwordRecovery.issueToken.mutate({
           email: form,
-          placeId: $pageContext.place?.id || '',
+          placeId: $pageContext.context.place?.id || '',
         })
       }
       done = true

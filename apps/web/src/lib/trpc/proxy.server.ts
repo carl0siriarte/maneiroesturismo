@@ -1,5 +1,5 @@
 import type { Handle, RequestEvent } from '@sveltejs/kit'
-import type { AnyRouter } from '@trpc/server'
+import type { AnyRouter, inferRouterDef } from '@trpc/server'
 
 type resolveHandler = Parameters<Handle>[0]['resolve']
 
@@ -21,9 +21,7 @@ export async function createTRPCProxy<T extends AnyRouter>(
     headers?: HeadersInit
     cache?: {
       enable?: boolean
-      privateQueries:
-        | string[]
-        | Exclude<keyof T['_def']['queries'], symbol | number>[]
+      privateQueries?: string[]
     }
     event: RequestEvent
     resolve: resolveHandler
@@ -49,7 +47,7 @@ export async function createTRPCProxy<T extends AnyRouter>(
     const { body, headers, status } = apiResponse.clone()
 
     const isPublic =
-      !cache?.privateQueries.some((path) => query.startsWith(path)) &&
+      !cache?.privateQueries?.some((path) => query.startsWith(path)) &&
       event.request.method == 'GET'
 
     response = new Response(body, { headers, status })

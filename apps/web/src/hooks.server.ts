@@ -1,13 +1,13 @@
 import type { Handle } from '@sveltejs/kit'
 import { handleSession } from 'svelte-kit-cookie-session'
-import { placeRoutes, getLayoutType } from '$lib/utils/layout'
-import { getDefaultHost } from '$lib/utils/host'
+import { getLayoutType } from '$lib/utils/layout'
 
 import { sequence } from '@sveltejs/kit/hooks'
 import { createTRPCProxy } from '$lib/trpc/proxy.server'
 import type { tRPCRouter } from '@pkg/trpc'
+import { getDefaultHost } from '$lib/utils/host'
 
-const privateQueries = ['user:whoami', 'tourist:whoami']
+const privateQueries = ['users.whoami', 'tourists.whoami']
 
 const handleAPI: Handle = async ({ event, resolve }) => {
   const { url, locals } = event
@@ -36,7 +36,7 @@ const handleAPI: Handle = async ({ event, resolve }) => {
     response.headers.delete('x-access-token')
   }
 
-  const privatePaths = ['/account', '/bag']
+  const privatePaths = ['/account', '/bag', '/login']
   const isPublic =
     layoutType == 'place' &&
     !privatePaths.some((path) => url.pathname.startsWith(path))
@@ -56,7 +56,8 @@ export const session = handleSession(
     cookie: {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      // domain: getDefaultHost().split(':')[0],
+      sameSite: 'lax',
     },
   },
   async ({ event, resolve }) => {

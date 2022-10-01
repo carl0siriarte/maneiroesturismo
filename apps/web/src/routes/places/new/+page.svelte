@@ -1,26 +1,23 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import trpc from '$lib/trpc/client'
-  import type { InferMutationInput } from '@pkg/trpc'
-  import { Add24, NewTab24 } from 'carbon-icons-svelte'
+  import { trpc } from '$lib/trpc/client'
+  import type { RouterTypes } from '@pkg/trpc'
+  import { NewTab24 } from 'carbon-icons-svelte'
   import { elasticOut, expoOut } from 'svelte/easing'
   import { scale, slide } from 'svelte/transition'
 
   let error: Error | undefined
 
   let saving = false
-  let place: InferMutationInput<'places:create'> = {
-    customDomain: null,
-    favicon: null,
-    logo: null,
+  let place: RouterTypes['places']['create']['input'] = {
     name: '',
     slug: '',
   }
   const submit = async () => {
     saving = true
     try {
-      const data = await trpc().mutation('places:create', place)
-      goto(`/`)
+      const created = await trpc.places.create.mutate(place)
+      goto(`/places/${created.slug}`)
     } catch (err) {
       console.log(err)
       error = err
@@ -81,7 +78,7 @@
           <div
             class="border-t border-b border-r rounded-tr rounded-br font-bold bg-light-500 border-gray-300 text-xs leading-tight w-full py-2 px-3 text-cool-gray-700 appearance-none dark:bg-dark-600 dark:border-dark-100 dark:text-cool-gray-100 focus:outline-none focus:shadow-outline"
           >
-            .maneiroesturismo.com.com
+            .maneiroesturismo.com
           </div>
         </div>
       </label>
