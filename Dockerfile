@@ -52,7 +52,7 @@ ADD litefs.yml /etc/litefs.yml
 RUN apk add bash curl fuse sqlite
 
 # Ensure our mount & data directories exists before mounting with LiteFS.
-RUN mkdir -p /sqlite /mnt/sqlite
+RUN mkdir -p /mnt/litefs/db
 
 WORKDIR /app
 
