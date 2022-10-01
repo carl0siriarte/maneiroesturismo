@@ -33,7 +33,9 @@
       <div class="flex flex-col space-y-2 text-center items-center">
         <span class="font-bold text-xs">A través de</span>
         <a
-          href={getAbsoluteURL({})}
+          href={getAbsoluteURL({
+            subdomain: 'app',
+          })}
           class="transform transition-transform duration-200 hover:scale-95"
           style="will-change: transform"
           target="_blank"

@@ -5,7 +5,6 @@
   import Logo from '$lib/Logo.svelte'
 
   import { pageContext, preferences, user } from '$lib/stores'
-  import { getAbsoluteURL } from '$lib/utils/host'
   import { api } from '@pkg/shared'
   import {
     Logout16,

@@ -60,26 +60,26 @@ export async function applicationFactory(run?: boolean) {
     res.send({ pid: process.pid })
   })
 
-  app.$server.get<{
-    Querystring: {
-      path: string
-    }
-  }>(
-    '/ls',
-    {
-      schema: {
-        querystring: {
-          path: { type: 'string' },
-        },
-      },
-    },
-    async (req, res) => {
-      const { path } = req.query
-      const tree = await walkDir(path)
-      console.log(tree)
-      res.send(tree)
-    }
-  )
+  // app.$server.get<{
+  //   Querystring: {
+  //     path: string
+  //   }
+  // }>(
+  //   '/ls',
+  //   {
+  //     schema: {
+  //       querystring: {
+  //         path: { type: 'string' },
+  //       },
+  //     },
+  //   },
+  //   async (req, res) => {
+  //     const { path } = req.query
+  //     const tree = await walkDir(path)
+  //     console.log(tree)
+  //     res.send(tree)
+  //   }
+  // )
 
   registerTRPC(app.$server)
 
