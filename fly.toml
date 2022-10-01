@@ -8,9 +8,9 @@ processes = []
 [env]
   DATABASE_URL="file:/sqlite/db"
 
-# [mounts]
-#  source="sqlite"
-#  destination="/mnt/sqlite"
+[mounts]
+ source="sqlite"
+ destination="/mnt/sqlite"
 
 [experimental]
   allowed_public_ports = []
