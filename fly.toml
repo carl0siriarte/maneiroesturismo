@@ -8,9 +8,9 @@ processes = []
 [env]
   DATABASE_URL="file:/litefs/db/maneiro.sqlite"
 
-# [mounts]
-#  source="litefs"
-#  destination="/mnt/litefs"
+[mounts]
+ source="litefs"
+ destination="/mnt/litefs"
 
 [experimental]
   allowed_public_ports = []
