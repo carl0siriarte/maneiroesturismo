@@ -20,7 +20,7 @@
     "dev:lib": "turbo run dev --filter='./packages/*' --parallel",
     "generate": "turbo run generate",
     "db:push": "turbo run db:push",
-    "start:fly": "node apps/api/dist/index.js"
+    "start:fly": "npx prisma migrate deploy && node apps/api/dist/index.js"
   },
   "devDependencies": {
     "patch-package": "^6.4.7",
