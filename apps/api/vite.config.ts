@@ -12,6 +12,9 @@ export default defineConfig({
     target: 'node',
   },
   envDir: '../../',
+  define: {
+    __SECRET_TOKEN__: JSON.stringify(process.env.SECRET_TOKEN || ''),
+  },
   plugins: [
     ...VitePluginNode({
       adapter: 'fastify',
