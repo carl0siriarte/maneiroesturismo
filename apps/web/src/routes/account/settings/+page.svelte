@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { tourist, user } from '$lib'
+  import { user } from '$lib'
   import Main from '$lib/__layouts/app/shell/Main.svelte'
   import type { User } from '@pkg/db'
   import { UserAvatar24 } from 'carbon-icons-svelte'

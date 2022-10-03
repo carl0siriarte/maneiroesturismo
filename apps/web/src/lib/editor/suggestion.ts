@@ -2,26 +2,38 @@ import type { SuggestionOptions } from '@tiptap/suggestion'
 import {
   slashVisible,
   slashItems,
-  slashLocaltion,
+  slashLocation,
   slashProps,
   type Item,
 } from './stores'
+
+let setLocation: (() => void) | undefined
 
 const options: Pick<SuggestionOptions, 'render' | 'items'> = {
   render() {
     return {
       onStart: ({ clientRect, editor, range, items }) => {
         if (!clientRect) return
+        if (setLocation) {
+          window.removeEventListener('scroll', setLocation)
+        }
+        setLocation = () => {
+          let location = clientRect?.()
+          if (location) {
+            slashLocation.set({
+              x: location.x,
+              y: location.y + window.scrollY,
+              height: location.height,
+            })
+          }
+        }
+        window.addEventListener('scroll', setLocation)
         let location = clientRect()
         if (!location) return
         slashProps.set({ editor, range })
         slashVisible.set(true)
-        slashLocaltion.set({
-          x: location.x,
-          y: location.y,
-          height: location.height,
-        })
         slashItems.set(items)
+        setLocation()
       },
 
       onUpdate({ items }) {
@@ -38,6 +50,9 @@ const options: Pick<SuggestionOptions, 'render' | 'items'> = {
 
       onExit() {
         slashVisible.set(false)
+        if (setLocation) {
+          window.removeEventListener('scroll', setLocation)
+        }
       },
     }
   },

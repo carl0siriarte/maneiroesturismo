@@ -8,7 +8,7 @@
   import {
     slashVisible,
     slashItems,
-    slashLocaltion,
+    slashLocation,
     slashProps,
   } from './stores'
 
@@ -17,7 +17,7 @@
 
   let elements = []
 
-  $: invert = ($slashLocaltion.y || 0) + wrapperHeight > height || 0
+  $: invert = ($slashLocation.y || 0) + wrapperHeight > height || 0
 </script>
 
 <svelte:window bind:innerHeight={height} />
@@ -33,9 +33,9 @@
     use:portal
     transition:fly|local={{ duration: 200, y: 5, easing: expoOut }}
     bind:clientHeight={wrapperHeight}
-    style="left: {$slashLocaltion.x}px; top: {invert
-      ? $slashLocaltion.y - $slashLocaltion.height - 288
-      : $slashLocaltion.y + $slashLocaltion.height}px;"
+    style="left: {$slashLocation.x}px; top: {invert
+      ? $slashLocation.y - $slashLocation.height - wrapperHeight
+      : $slashLocation.y + $slashLocation.height}px;"
   >
     <div
       class="bg-white font-bold text-sm p-2 top-0 left-0 text-slate-500 sticky uppercase dark:bg-dark-800"

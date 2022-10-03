@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis'
-import { createPrismaClient } from '@pkg/db'
+import { setPrismaDatabaseURL, prisma } from '@pkg/db'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { ZodError } from 'zod'
 import transformer from 'trpc-transformer'
@@ -39,10 +39,13 @@ export const t = initTRPC
   })
 
 export const prismaMiddleware = t.middleware(async ({ ctx, next }) => {
+  if (ctx.databaseUrl) {
+    await setPrismaDatabaseURL(ctx.databaseUrl)
+  }
   return next({
     ctx: {
       ...ctx,
-      prisma: createPrismaClient(ctx.databaseUrl),
+      prisma,
     },
   })
 })
