@@ -1,5 +1,5 @@
 # Fetch the LiteFS binary using a multi-stage build.
-FROM flyio/litefs:pr-115 AS litefs
+FROM flyio/litefs:pr-89 AS litefs
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:alpine AS installer
