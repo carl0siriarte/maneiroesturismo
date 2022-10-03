@@ -83,9 +83,16 @@ const listPosts = procedure.input(listPostsInput).query(async ({ input }) => {
   return await db.listPosts(input)
 })
 
+const getPostInput = z.string()
+
+const getPost = procedure.input(getPostInput).query(async ({ input }) => {
+  return await db.getPost(input)
+})
+
 export default t.router({
   create: createPost,
   update: updatePost,
   delete: deletePost,
   list: listPosts,
+  get: getPost,
 })
