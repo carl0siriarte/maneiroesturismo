@@ -25,7 +25,7 @@ export async function applicationFactory(run?: boolean) {
     const redirect = req.method == 'POST' || req.routerPath == '/migrate-db'
     if (redirect && import.meta.env.PROD) {
       try {
-        const primary = await readFile('/litefs/.primary', 'utf8')
+        const primary = await readFile('/db/.primary', 'utf8')
         if (primary) {
           res.headers({
             'fly-replay': `instance=${primary}`,

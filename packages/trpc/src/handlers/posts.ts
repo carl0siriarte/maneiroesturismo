@@ -52,7 +52,40 @@ const updatePost = authProcedure
     return await db.updatePost(input)
   })
 
+const deletePostInput = z.string()
+
+const deletePost = authProcedure
+  .input(deletePostInput)
+  .mutation(async ({ ctx, input }) => {
+    const post = await db.getPost(input)
+    const role = await db.checkPlaceMember({
+      memberId: ctx.userId || '',
+      placeId: post?.placeId || '',
+    })
+    if (!role) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Este usuario no tiene los permisos necesarios',
+      })
+    }
+    return await db.deletePost(input)
+  })
+
+const listPostsInput = z.object({
+  placeId: z.string(),
+  ids: z.string().array().optional(),
+  filter: z.string().optional(),
+  page: z.number().min(1).default(1),
+  pageSize: z.number().min(1).default(20),
+})
+
+const listPosts = procedure.input(listPostsInput).query(async ({ input }) => {
+  return await db.listPosts(input)
+})
+
 export default t.router({
-  createPost,
-  updatePost,
+  create: createPost,
+  update: updatePost,
+  delete: deletePost,
+  list: listPosts,
 })

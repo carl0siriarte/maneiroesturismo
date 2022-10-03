@@ -6,7 +6,7 @@ kill_timeout = 5
 processes = []
 
 [env]
-  DATABASE_URL="file:/litefs/data.sqlite"
+  DATABASE_URL="file:/db/data.sqlite"
 
 [mounts]
  source="litefs"
