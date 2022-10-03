@@ -7,6 +7,7 @@
   import { onMount, setContext } from 'svelte'
   import { portal } from 'svelte-portal'
   import Shell from './place/shell/Shell.svelte'
+  import { pageContext } from '$lib/stores'
 
   $: pageTitle =
     ($page.data.title ? $page.data.title + ' | ' : '') + 'Maneiro es Turismo'
@@ -64,9 +65,9 @@
 {/if}
 
 <Favicons
-  favicon="/images/logo.svg"
+  favicon={$pageContext.context.place?.logo || '/images/logo.svg'}
   themeColor="#000"
-  titleName="Maneiro es Turismo"
+  titleName={$pageContext.context.place?.name}
   description={$page.data.description}
 />
 
