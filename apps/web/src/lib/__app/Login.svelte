@@ -25,7 +25,7 @@
         }
       }
       if (isLogin) {
-        await trpc.users.login.mutate({
+        await trpc.users.login.query({
           user: {
             email: email?.toLocaleLowerCase(),
             password,

@@ -131,7 +131,7 @@ export default t.router({
         }),
       })
     )
-    .mutation(
+    .query(
       async ({
         ctx,
         input: {
