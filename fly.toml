@@ -9,8 +9,8 @@ processes = []
   DATABASE_URL="file:/db/data.sqlite"
 
 [mounts]
- source="litefs"
- destination="/mnt/litefs"
+ source="db"
+ destination="/mnt/db"
 
 [experimental]
   allowed_public_ports = []
