@@ -40,7 +40,6 @@ RUN pnpx turbo run build --scope=api
 FROM node:alpine AS runner
 
 EXPOSE 3000
-VOLUME /mnt/db
 
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
