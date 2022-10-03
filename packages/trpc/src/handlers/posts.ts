@@ -15,17 +15,20 @@ const createPostInput = z.object({
 const createPost = authProcedure
   .input(createPostInput)
   .mutation(async ({ ctx, input }) => {
-    const role = await db.checkPlaceMember({
-      memberId: ctx.userId || '',
-      placeId: input.placeId,
-    })
+    const role = await db.checkPlaceMember(
+      {
+        memberId: ctx.userId || '',
+        placeId: input.placeId,
+      },
+      ctx.prisma
+    )
     if (!role) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Este usuario no tiene los permisos necesarios',
       })
     }
-    return await db.createPost(input)
+    return await db.createPost(input, ctx.prisma)
   })
 
 const updatePostInput = z.object({
@@ -38,18 +41,21 @@ const updatePostInput = z.object({
 const updatePost = authProcedure
   .input(updatePostInput)
   .mutation(async ({ ctx, input }) => {
-    const post = await db.getPost(input.id)
-    const role = await db.checkPlaceMember({
-      memberId: ctx.userId || '',
-      placeId: post?.placeId || '',
-    })
+    const post = await db.getPost(input.id, ctx.prisma)
+    const role = await db.checkPlaceMember(
+      {
+        memberId: ctx.userId || '',
+        placeId: post?.placeId || '',
+      },
+      ctx.prisma
+    )
     if (!role) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Este usuario no tiene los permisos necesarios',
       })
     }
-    return await db.updatePost(input)
+    return await db.updatePost(input, ctx.prisma)
   })
 
 const deletePostInput = z.string()
@@ -57,18 +63,21 @@ const deletePostInput = z.string()
 const deletePost = authProcedure
   .input(deletePostInput)
   .mutation(async ({ ctx, input }) => {
-    const post = await db.getPost(input)
-    const role = await db.checkPlaceMember({
-      memberId: ctx.userId || '',
-      placeId: post?.placeId || '',
-    })
+    const post = await db.getPost(input, ctx.prisma)
+    const role = await db.checkPlaceMember(
+      {
+        memberId: ctx.userId || '',
+        placeId: post?.placeId || '',
+      },
+      ctx.prisma
+    )
     if (!role) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Este usuario no tiene los permisos necesarios',
       })
     }
-    return await db.deletePost(input)
+    return await db.deletePost(input, ctx.prisma)
   })
 
 const listPostsInput = z.object({
@@ -79,14 +88,16 @@ const listPostsInput = z.object({
   pageSize: z.number().min(1).default(20),
 })
 
-const listPosts = procedure.input(listPostsInput).query(async ({ input }) => {
-  return await db.listPosts(input)
-})
+const listPosts = procedure
+  .input(listPostsInput)
+  .query(async ({ input, ctx }) => {
+    return await db.listPosts(input, ctx.prisma)
+  })
 
 const getPostInput = z.string()
 
-const getPost = procedure.input(getPostInput).query(async ({ input }) => {
-  return await db.getPost(input)
+const getPost = procedure.input(getPostInput).query(async ({ input, ctx }) => {
+  return await db.getPost(input, ctx.prisma)
 })
 
 export default t.router({

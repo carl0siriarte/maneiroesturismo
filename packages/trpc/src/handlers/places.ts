@@ -21,10 +21,13 @@ const placeData = t.router({
       })
     )
     .mutation(async ({ input: { placeData, placeId }, ctx }) => {
-      const role = await db.checkPlaceMember({
-        memberId: ctx.userId || '',
-        placeId,
-      })
+      const role = await db.checkPlaceMember(
+        {
+          memberId: ctx.userId || '',
+          placeId,
+        },
+        ctx.prisma
+      )
       if (!role) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
@@ -32,7 +35,7 @@ const placeData = t.router({
             'Este usuario no tiene los permisos necesarios para actualizar este sitio',
         })
       }
-      return await db.upsertPlaceData({ placeData, placeId })
+      return await db.upsertPlaceData({ placeData, placeId }, ctx.prisma)
     }),
 })
 
@@ -45,7 +48,7 @@ const mutations = t.router({
       })
     )
     .mutation(({ input, ctx }) =>
-      db.createPlace({ place: input, userOwnerId: ctx.userId! })
+      db.createPlace({ place: input, userOwnerId: ctx.userId! }, ctx.prisma)
     ),
   update: authProcedure
     .input(
@@ -82,7 +85,7 @@ const mutations = t.router({
         message: 'Este usuario no tiene los permisos necesarios para eliminar',
       })
     }
-    await db.deletePlace(input)
+    await db.deletePlace(input, ctx.prisma)
   }),
 })
 
@@ -105,19 +108,22 @@ const queries = t.router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const role = await db.checkPlaceMember({
-        memberId: ctx.userId || '',
-        placeId: input.placeId,
-      })
+      const role = await db.checkPlaceMember(
+        {
+          memberId: ctx.userId || '',
+          placeId: input.placeId,
+        },
+        ctx.prisma
+      )
       if (!role || role == 'regular') {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Este usuario no tiene los permisos necesarios',
         })
       }
-      return await db.listUsers(input)
+      return await db.listUsers(input, ctx.prisma)
     }),
-  get: t.procedure
+  get: procedure
     .input(
       z.object({
         id: z.string().optional(),
@@ -125,11 +131,11 @@ const queries = t.router({
         host: z.string().optional(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const data: db.PlaceContext = {}
-      data.place = await db.getPlace(input)
+      data.place = await db.getPlace(input, ctx.prisma)
       if (data.place) {
-        data.placeData = await db.getPlaceData(data.place.id)
+        data.placeData = await db.getPlaceData(data.place.id, ctx.prisma)
       }
       return data
     }),

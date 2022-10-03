@@ -1,4 +1,4 @@
-import { Prisma, prisma } from 'src/prisma.js'
+import { Prisma, prisma as $prisma } from 'src/prisma.js'
 import * as sj from 'superjson'
 import type {
   Overwrite,
@@ -18,10 +18,10 @@ export type CreatePlaceInput = {
   userOwnerId: string
 }
 
-export async function createPlace({
-  place,
-  userOwnerId,
-}: CreatePlaceInput): Promise<Place> {
+export async function createPlace(
+  { place, userOwnerId }: CreatePlaceInput,
+  prisma = $prisma
+): Promise<Place> {
   return await prisma.place.create({
     data: {
       ...place,
@@ -40,10 +40,10 @@ export type UpsertPlaceDataInput = {
   placeData: PlaceData
 }
 
-export async function upsertPlaceData({
-  placeId,
-  placeData,
-}: UpsertPlaceDataInput) {
+export async function upsertPlaceData(
+  { placeId, placeData }: UpsertPlaceDataInput,
+  prisma = $prisma
+) {
   const data = sj.stringify(placeData)
   const { data: upsert } = await prisma.placeData.upsert({
     where: {
@@ -60,7 +60,7 @@ export async function upsertPlaceData({
   return sj.parse<PlaceData>(upsert)
 }
 
-export async function getPlaceData(placeId: string) {
+export async function getPlaceData(placeId: string, prisma = $prisma) {
   const placeData = await prisma.placeData.findUnique({
     where: {
       placeId,
@@ -75,7 +75,10 @@ export type UpdatePlaceInput = Overwrite<
   { id: string }
 >
 
-export async function updatePlace(place: UpdatePlaceInput): Promise<Place> {
+export async function updatePlace(
+  place: UpdatePlaceInput,
+  prisma = $prisma
+): Promise<Place> {
   const { id, ...data } = place
   return await prisma.place.update({
     data,
@@ -98,13 +101,10 @@ export type ListPlacesInput = {
   pageSize: number
 }
 
-export async function listPlaces({
-  page,
-  memberId,
-  pageSize,
-  filter,
-  orderBy,
-}: ListPlacesInput): Promise<Page<Place>> {
+export async function listPlaces(
+  { page, memberId, pageSize, filter, orderBy }: ListPlacesInput,
+  prisma = $prisma
+): Promise<Page<Place>> {
   const where: Prisma.PlaceWhereInput = {
     PlaceMember: {
       some: {
@@ -132,7 +132,8 @@ export async function listPlaces({
 export type CheckPlaceMemberInput = Record<'placeId' | 'memberId', string>
 
 export async function checkPlaceMember(
-  input: CheckPlaceMemberInput
+  input: CheckPlaceMemberInput,
+  prisma = $prisma
 ): Promise<PlaceMemberRole | null> {
   const placeMember = await prisma.placeMember.findUnique({
     where: {
@@ -144,10 +145,10 @@ export async function checkPlaceMember(
 
 export type GetPlaceInput = Partial<Record<'slug' | 'host' | 'id', string>>
 
-export async function getPlace({
-  id,
-  slug,
-}: GetPlaceInput): Promise<Place | null> {
+export async function getPlace(
+  { id, slug }: GetPlaceInput,
+  prisma = $prisma
+): Promise<Place | null> {
   return await prisma.place.findUnique({
     where: {
       id,
@@ -156,7 +157,7 @@ export async function getPlace({
   })
 }
 
-export async function deletePlace(id: string) {
+export async function deletePlace(id: string, prisma = $prisma) {
   await prisma.place.delete({
     where: {
       id,

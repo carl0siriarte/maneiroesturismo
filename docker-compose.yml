@@ -1,0 +1,24 @@
+  # db:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     MYSQL_DATABASE: 'print-ya'
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: true
+  #     # Password for root access
+  #     # MYSQL_ROOT_PASSWORD: 'password'
+  #   ports:
+  #     # <Port exposed> : < MySQL Port running inside container>
+  #     - '5432:5432'
+  #   expose:
+  #     # Opens port 3306 on the container
+  #     - '5432'
+  #     # Where our data will be persisted
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: maneiro

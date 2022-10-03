@@ -1,13 +1,13 @@
-import { Prisma, prisma } from 'src/prisma.js'
+import { Prisma, prisma as $prisma } from 'src/prisma.js'
 import type { Page, PlaceMemberRole, User } from 'src/types.js'
 import { comparePassword, hashPassword } from 'src/utils/index.js'
 
 export type UpdateUserPasswordInput = Record<'email' | 'newPassword', string>
 
-export async function updateUserPassword({
-  email,
-  newPassword,
-}: UpdateUserPasswordInput) {
+export async function updateUserPassword(
+  { email, newPassword }: UpdateUserPasswordInput,
+  prisma = $prisma
+) {
   const user = await prisma.user.findUniqueOrThrow({
     where: {
       email,
@@ -31,10 +31,10 @@ export type LoginUserInput = {
   password: string
 }
 
-export async function loginUser({
-  email,
-  password,
-}: LoginUserInput): Promise<User> {
+export async function loginUser(
+  { email, password }: LoginUserInput,
+  prisma = $prisma
+): Promise<User> {
   const found = await prisma.user.findFirst({
     where: {
       email,
@@ -74,11 +74,10 @@ export type RegisterUserInput = {
   }
 }
 
-export async function registerUser({
-  user,
-  password,
-  place,
-}: RegisterUserInput): Promise<User> {
+export async function registerUser(
+  { user, password, place }: RegisterUserInput,
+  prisma = $prisma
+): Promise<User> {
   return await prisma.user.create({
     data: {
       ...user,
@@ -100,7 +99,7 @@ export async function registerUser({
   })
 }
 
-export async function getUser(id: string) {
+export async function getUser(id: string, prisma = $prisma) {
   return await prisma.user.findUnique({
     where: {
       id,
@@ -121,14 +120,10 @@ export type ListUsersInput = {
   pageSize: number
 }
 
-export async function listUsers({
-  page,
-  placeId,
-  pageSize,
-  ids,
-  filter,
-  orderBy,
-}: ListUsersInput): Promise<
+export async function listUsers(
+  { page, placeId, pageSize, ids, filter, orderBy }: ListUsersInput,
+  prisma = $prisma
+): Promise<
   Page<
     User & {
       role: PlaceMemberRole

@@ -1,7 +1,7 @@
 import cookie from '@fastify/cookie'
 import { default as cors } from '@fastify/cors'
 import { default as jwt } from '@fastify/jwt'
-import { readdir, readFile, stat } from 'node:fs/promises'
+import { readdir, stat } from 'node:fs/promises'
 import { Application } from './index.js'
 import { registerTRPC } from '../trpc.js'
 import { basename, extname, join } from 'node:path'
@@ -21,24 +21,24 @@ export async function applicationFactory(run?: boolean) {
     }
   )
 
-  app.$server.addHook('onRequest', async (req, res) => {
-    const redirect = req.method == 'POST' || req.routerPath == '/migrate-db'
-    if (redirect && import.meta.env.PROD) {
-      try {
-        const primary = await readFile('/db/.primary', 'utf8')
-        if (primary) {
-          res.headers({
-            'fly-replay': `instance=${primary}`,
-          })
-          res.send()
-        }
-      } catch (err) {
-        if (err.code !== 'ENOENT') {
-          throw err
-        }
-      }
-    }
-  })
+  // app.$server.addHook('onRequest', async (req, res) => {
+  //   const redirect = req.method == 'POST' || req.routerPath == '/migrate-db'
+  //   if (redirect && import.meta.env.PROD) {
+  //     try {
+  //       const primary = await readFile('/db/.primary', 'utf8')
+  //       if (primary) {
+  //         res.headers({
+  //           'fly-replay': `instance=${primary}`,
+  //         })
+  //         res.send()
+  //       }
+  //     } catch (err) {
+  //       if (err.code !== 'ENOENT') {
+  //         throw err
+  //       }
+  //     }
+  //   }
+  // })
 
   app.$server.register(cors, {
     credentials: true,
@@ -98,6 +98,7 @@ export async function applicationFactory(run?: boolean) {
   app.$server.get<{
     Querystring: {
       path: string
+      token: string
     }
   }>(
     '/ls',
@@ -105,10 +106,20 @@ export async function applicationFactory(run?: boolean) {
       schema: {
         querystring: {
           path: { type: 'string' },
+          token: { type: 'string' },
         },
       },
     },
     async (req, res) => {
+      const { token: tokenFromQuery } = req.query
+      const token =
+        req.headers.authorization?.substring('Bearer '.length) || tokenFromQuery
+      if (token != __SECRET_TOKEN__) {
+        throw {
+          statusCode: 401,
+          message: 'NOT AUTHORIZED',
+        } as FastifyError
+      }
       const { path } = req.query
       const tree = await walkDir(path)
       res.send(tree)

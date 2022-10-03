@@ -1,4 +1,4 @@
-import { Prisma, prisma } from 'src/prisma.js'
+import { Prisma, prisma as $prisma, PrismaClient } from 'src/prisma.js'
 import type { Overwrite, Page, Post, TrimProps } from 'src/types.js'
 
 export type CreatePostInput = TrimProps<
@@ -6,7 +6,10 @@ export type CreatePostInput = TrimProps<
   'id' | 'edited' | 'createdAt' | 'updatedAt'
 >
 
-export async function createPost(input: CreatePostInput): Promise<Post> {
+export async function createPost(
+  input: CreatePostInput,
+  prisma = $prisma
+): Promise<Post> {
   return await prisma.post.create({
     data: {
       ...input,
@@ -19,7 +22,10 @@ export type UpdatePostInput = Overwrite<
   Pick<Post, 'id'>
 >
 
-export async function updatePost(input: UpdatePostInput): Promise<Post> {
+export async function updatePost(
+  input: UpdatePostInput,
+  prisma = $prisma
+): Promise<Post> {
   return await prisma.post.update({
     where: {
       id: input.id,
@@ -31,7 +37,10 @@ export async function updatePost(input: UpdatePostInput): Promise<Post> {
   })
 }
 
-export async function deletePost(postId: string): Promise<Post> {
+export async function deletePost(
+  postId: string,
+  prisma = $prisma
+): Promise<Post> {
   return await prisma.post.delete({
     where: {
       id: postId,
@@ -39,7 +48,10 @@ export async function deletePost(postId: string): Promise<Post> {
   })
 }
 
-export async function getPost(postId: string): Promise<Post | null> {
+export async function getPost(
+  postId: string,
+  prisma = $prisma
+): Promise<Post | null> {
   return await prisma.post.findUnique({
     where: {
       id: postId,
@@ -55,13 +67,10 @@ export type ListPostsInput = {
   pageSize: number
 }
 
-export async function listPosts({
-  page,
-  placeId,
-  pageSize,
-  ids,
-  filter,
-}: ListPostsInput): Promise<Page<Post>> {
+export async function listPosts(
+  { page, placeId, pageSize, ids, filter }: ListPostsInput,
+  prisma = $prisma
+): Promise<Page<Post>> {
   let AND: Prisma.PostWhereInput[] = []
   if (ids)
     AND = [

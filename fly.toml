@@ -5,17 +5,9 @@ kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
-[env]
-  DATABASE_URL="file:/db/data.sqlite"
-
-[mounts]
- source="db"
- destination="/mnt/db"
-
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  enable_consul = true
 
 [[services]]
   http_checks = []

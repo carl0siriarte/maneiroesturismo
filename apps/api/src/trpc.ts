@@ -31,11 +31,6 @@ async function createContext({
         res.header('x-access-token', token)
         return token
       },
-      setTourist: async (id: string) => {
-        const token = await res.jwtSign({ id, type: 'tourist' })
-        res.header('x-access-token', token)
-        return token
-      },
     },
   }
 }

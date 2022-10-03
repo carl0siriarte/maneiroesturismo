@@ -28,10 +28,13 @@ const passwordRecovery = t.router({
           code: 'UNAUTHORIZED',
           message: 'Invalid token',
         })
-      await db.updateUserPassword({
-        email,
-        newPassword,
-      })
+      await db.updateUserPassword(
+        {
+          email,
+          newPassword,
+        },
+        ctx.prisma
+      )
       await ctx.redis.del(key)
     }),
   issueToken: procedure
@@ -41,7 +44,7 @@ const passwordRecovery = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const user = await db.prisma.user.findUnique({
+      const user = await ctx.prisma.user.findUnique({
         where: input,
       })
       if (!user) {
@@ -107,11 +110,14 @@ export default t.router({
     )
     .mutation(async ({ input: { user, password, place }, ctx }) => {
       try {
-        const registered = await db.registerUser({
-          user,
-          place,
-          password,
-        })
+        const registered = await db.registerUser(
+          {
+            user,
+            place,
+            password,
+          },
+          ctx.prisma
+        )
         await ctx.session.setUser(registered.id)
         return registered
       } catch (err) {
@@ -139,10 +145,13 @@ export default t.router({
         },
       }) => {
         try {
-          const user = await db.loginUser({
-            email,
-            password,
-          })
+          const user = await db.loginUser(
+            {
+              email,
+              password,
+            },
+            ctx.prisma
+          )
           await ctx.session.setUser(user.id)
           return user
         } catch (err) {
@@ -154,16 +163,19 @@ export default t.router({
       }
     ),
   whoami: procedure.query(
-    async ({ ctx }) => await db.getUser(ctx.userId || '')
+    async ({ ctx }) => await db.getUser(ctx.userId || '', ctx.prisma)
   ),
   checkRole: procedure
     .meta({ auth: 'user' })
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const role = await db.checkPlaceMember({
-        memberId: ctx.userId || '',
-        placeId: input,
-      })
+      const role = await db.checkPlaceMember(
+        {
+          memberId: ctx.userId || '',
+          placeId: input,
+        },
+        ctx.prisma
+      )
       return role
     }),
   places: procedure
@@ -191,6 +203,9 @@ export default t.router({
         })
     )
     .query(async ({ ctx, input }) => {
-      return await db.listPlaces({ memberId: ctx.userId || '', ...input })
+      return await db.listPlaces(
+        { memberId: ctx.userId || '', ...input },
+        ctx.prisma
+      )
     }),
 })

@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis'
+import { createPrismaClient } from '@pkg/db'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { ZodError } from 'zod'
 import transformer from 'trpc-transformer'
@@ -11,6 +12,7 @@ export type tRPCContext = {
     ) => Promise<Partial<Record<'userId', string>>>
   }
   ip: string
+  databaseUrl?: string
 }
 
 export type tRPCMeta = {
@@ -35,6 +37,15 @@ export const t = initTRPC
     },
     transformer,
   })
+
+export const prismaMiddleware = t.middleware(async ({ ctx, next }) => {
+  return next({
+    ctx: {
+      ...ctx,
+      prisma: createPrismaClient(ctx.databaseUrl),
+    },
+  })
+})
 
 export const authMiddleware = t.middleware(async ({ ctx, next, meta }) => {
   const auth = await ctx.session.auth()
@@ -66,4 +77,7 @@ export const redisMiddleware = t.middleware(async ({ ctx, next }) => {
   })
 })
 
-export const procedure = t.procedure.use(redisMiddleware).use(authMiddleware)
+export const procedure = t.procedure
+  .use(prismaMiddleware)
+  .use(redisMiddleware)
+  .use(authMiddleware)
