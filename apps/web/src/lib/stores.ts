@@ -201,37 +201,6 @@ export const preferences = persistentWritable('places:preferences', {
   darkMode: false,
 })
 
-export type TouristStore = Readable<Tourist | null | undefined> & {
-  invalidate(): void
-}
-
-const createTouristStore = (): TouristStore => {
-  const tick = writable(Symbol())
-  const store = derived<[typeof tick], Tourist | null | undefined>(
-    [tick],
-    (_, set) => {
-      if (!browser) {
-        set(null)
-        return
-      }
-
-      trpc.tourists.whoami.query().then((c) => {
-        set(c)
-      })
-    },
-    undefined
-  )
-
-  return {
-    ...store,
-    invalidate: () => {
-      tick.set(Symbol())
-    },
-  }
-}
-
-export const tourist = createTouristStore()
-
 export type UserStore = Readable<User | null | undefined> & {
   invalidate(): void
 }

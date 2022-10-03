@@ -10,12 +10,12 @@ import type { GetInferenceHelpers } from '@trpc/server'
 import { t } from './router.js'
 import users from './handlers/users.js'
 import places from './handlers/places.js'
-import tourists from './handlers/tourists.js'
+import posts from './handlers/posts.js'
 
 export const router = t.router({
   users,
   places,
-  tourists,
+  posts,
 })
 
 export type tRPCRouter = typeof router

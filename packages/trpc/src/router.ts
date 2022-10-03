@@ -6,16 +6,15 @@ import transformer from 'trpc-transformer'
 export type tRPCContext = {
   session: {
     setUser: (id: string) => Promise<string>
-    setTourist: (id: string) => Promise<string>
     auth: (
       options?: Partial<Record<'verify', boolean>>
-    ) => Promise<Partial<Record<'userId' | 'touristId', string>>>
+    ) => Promise<Partial<Record<'userId', string>>>
   }
   ip: string
 }
 
 export type tRPCMeta = {
-  auth?: 'user' | 'tourist'
+  auth?: 'user'
 }
 
 export const t = initTRPC

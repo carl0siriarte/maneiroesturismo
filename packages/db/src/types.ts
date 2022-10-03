@@ -1,4 +1,8 @@
-import type { Place as _Place, User, Tourist } from '@prisma/client'
+import type {
+  Place as _Place,
+  User as _User,
+  Post as _Post,
+} from '@prisma/client'
 
 export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U
 export type TrimProps<T, U extends keyof T> = Pick<T, Exclude<keyof T, U>>
@@ -9,16 +13,18 @@ export type Page<T> = {
 
 export type Place = _Place
 
+export type User = _User
+
 export const PlaceMemberRole = {
   owner: 'owner' as const,
   admin: 'admin' as const,
-  normal: 'normal' as const,
+  regular: 'regular' as const,
 }
 
 export type PlaceMemberRole =
   typeof PlaceMemberRole[keyof typeof PlaceMemberRole]
 
-export { User, Tourist }
+export type Post = _Post
 
 export type LayoutType = 'app' | 'place'
 export type PlaceData = {

@@ -12,3 +12,5 @@ vite.config.ts.timestamp-*
 vite.config.js.timestamp-*
 db.db
 db.db-journal
+*.sqlite
+*.sqlite-journal

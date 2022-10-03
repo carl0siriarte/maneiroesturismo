@@ -13,7 +13,7 @@ async function createContext({
     ip: req.ip,
     session: {
       auth: async (options) => {
-        let ids: Partial<Record<'userId' | 'touristId', string>> = {}
+        let ids: Partial<Record<'userId', string>> = {}
         let decoded: any
         try {
           decoded = await req.jwtVerify()
@@ -22,7 +22,7 @@ async function createContext({
             throw err
         }
         if (decoded?.id && decoded?.type) {
-          ids[decoded.type === 'user' ? 'userId' : 'touristId'] = decoded.id
+          ids[`${decoded.type}Id`] = decoded.id
         }
         return ids
       },

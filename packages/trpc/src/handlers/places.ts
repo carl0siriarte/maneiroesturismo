@@ -62,7 +62,7 @@ const mutations = t.router({
         memberId: ctx.userId || '',
         placeId: input.id,
       })
-      if (!role || role == 'normal') {
+      if (!role || role == 'regular') {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message:
@@ -109,7 +109,7 @@ const queries = t.router({
         memberId: ctx.userId || '',
         placeId: input.placeId,
       })
-      if (!role || role == 'normal') {
+      if (!role || role == 'regular') {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Este usuario no tiene los permisos necesarios',

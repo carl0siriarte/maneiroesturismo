@@ -65,7 +65,7 @@
           />
         </label>
       </div>
-      {#if currentRole != 'normal'}
+      {#if currentRole != 'regular'}
         <div class="flex space-x-4 items-center">
           <label class="flex flex-col space-y-2 w-full">
             <span class="font-bold text-xs">Rol</span>
