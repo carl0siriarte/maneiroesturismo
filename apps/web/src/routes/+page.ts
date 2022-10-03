@@ -10,7 +10,10 @@ export const load: PageLoad = async ({ fetch, parent }) => {
     },
   })
   return {
-    title: 'Dashboard',
+    title:
+      contextData.layout === 'place'
+        ? contextData.context.place?.name
+        : 'Dashboard',
     places,
     showFeed: contextData.layout === 'place',
   }

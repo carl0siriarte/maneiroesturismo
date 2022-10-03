@@ -10,7 +10,7 @@ import {
   PUBLIC_UPSTASH_REDIS_TOKEN,
   PUBLIC_UPSTASH_REDIS_URL,
 } from '$env/static/public'
-import type { PageContext, Place, PlaceData, Tourist, User } from '@pkg/db'
+import type { PageContext, Place, PlaceData, User } from '@pkg/db'
 
 const redis = new Redis({
   url: PUBLIC_UPSTASH_REDIS_URL,
