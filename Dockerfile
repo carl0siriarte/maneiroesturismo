@@ -61,4 +61,4 @@ WORKDIR /app
 COPY --from=installer /app .
 
 # ENTRYPOINT "litefs"
-CMD "node apps/api/dist/index.js"
+CMD ["node", "apps/api/dist/index.js"]
