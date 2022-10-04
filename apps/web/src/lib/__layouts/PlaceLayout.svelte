@@ -9,8 +9,9 @@
   import Shell from './place/shell/Shell.svelte'
   import { pageContext } from '$lib/stores'
 
-  $: pageTitle =
-    ($page.data.title ? $page.data.title + ' | ' : '') + 'Maneiro es Turismo'
+  $: pageTitle = [$page.data.title, $pageContext.context.place?.name]
+    .filter((t) => !!t)
+    .join(' | ')
 
   let el: HTMLDivElement | undefined
   const navHeight = writable(0)

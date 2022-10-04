@@ -2,39 +2,15 @@
   import { page } from '$app/stores'
   import { createPageContextStore, pageContext } from '$lib'
   import { tooltip } from '$lib/components/tooltip'
-  import {
-    Image16,
-    Image32,
-    Map24,
-    Information16,
-    Home16,
-    EventSchedule16,
-  } from 'carbon-icons-svelte'
+  import { Image16, Image32, Map24 } from 'carbon-icons-svelte'
   import { setContext } from 'svelte'
   import { expoOut } from 'svelte/easing'
-  import { fly, blur, fade } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import Information from './Information.svelte'
+  import { feedPages, getFeedPageIcon } from './pages'
   import Posts from './Posts.svelte'
 
   export let spa = false
-
-  const placeLinks = [
-    {
-      href: '',
-      icon: Home16,
-      title: 'Inicio',
-    },
-    {
-      href: 'events',
-      icon: EventSchedule16,
-      title: 'Eventos',
-    },
-    {
-      href: 'information',
-      icon: Information16,
-      title: 'Información',
-    },
-  ]
 
   $: feedPage =
     (spa ? $page.url.searchParams.get('feed') : $page.params.feedPage) || ''
@@ -78,16 +54,14 @@
         <Image32 />
       </div>
       <div class="flex space-x-4 items-center">
-        {#each placeLinks as link}
-          {@const active = feedPage == link.href}
+        {#each feedPages as link}
+          {@const active = feedPage == link.id}
           <a
             class="border-transparent flex space-x-2 border-b-2 pb-1 duration-200 items-center hover:border-current"
             class:border-current={active}
-            href="{spa ? '?feed=' : '/'}{link.href}"
+            href="{spa ? '?feed=' : '/'}{link.id}"
           >
-            {#if link.icon}
-              <svelte:component this={link.icon} />
-            {/if}
+            <svelte:component this={getFeedPageIcon(link.id)} />
             <span class="flex font-bold text-xs">{link.title}</span>
           </a>
         {/each}
