@@ -59,8 +59,8 @@ const options: Pick<SuggestionOptions, 'render' | 'items'> = {
   items({ query }): Item[] {
     const items: Item[] = [
       {
-        title: 'Heading 1',
-        subtitle: 'BIG heading',
+        title: 'Cabecera 1',
+        subtitle: 'Ideal para títulos principales',
         command({ editor, range }) {
           if (!editor || !range) return
           editor
@@ -72,8 +72,8 @@ const options: Pick<SuggestionOptions, 'render' | 'items'> = {
         },
       },
       {
-        title: 'Heading 2',
-        subtitle: 'Less Big heading',
+        title: 'Cabecera 2',
+        subtitle: 'Ideal para títulos secundarios',
         command: ({ editor, range }) => {
           if (!editor || !range) return
           editor
@@ -85,8 +85,8 @@ const options: Pick<SuggestionOptions, 'render' | 'items'> = {
         },
       },
       {
-        title: 'Heading 3',
-        subtitle: 'Medium big heading',
+        title: 'Cabecera 3',
+        subtitle: 'Ideal para subtítulos',
         command: ({ editor, range }) => {
           if (!editor || !range) return
           editor
@@ -98,8 +98,8 @@ const options: Pick<SuggestionOptions, 'render' | 'items'> = {
         },
       },
       {
-        title: 'Bullet List',
-        subtitle: 'Pew pew pew',
+        title: 'Lista desordenada',
+        subtitle: 'Lista sin enumeración',
         command: ({ editor, range }) => {
           if (!editor || !range) return
           editor.commands.deleteRange(range)
@@ -107,7 +107,7 @@ const options: Pick<SuggestionOptions, 'render' | 'items'> = {
         },
       },
       {
-        title: 'Numbered List',
+        title: 'Lista ordenada',
         subtitle: '1, 2, 3, 4',
         command: ({ editor, range }) => {
           if (!editor || !range) return

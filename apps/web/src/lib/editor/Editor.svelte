@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte'
   import { Editor } from '@tiptap/core'
   import StarterKit from '@tiptap/starter-kit'
   import Link from '@tiptap/extension-link'
@@ -9,10 +9,15 @@
   import { slashVisible, slashItems, slashProps } from './stores'
 
   export let value: string | null | undefined
+  export let count: number = 0
   let isEmpty = !value?.trim()
 
   let selectedIndex = 0
   $: selectedIndex = $slashVisible ? selectedIndex : 0
+
+  const dispatch = createEventDispatcher<{
+    change: { value: { raw: string; html: string; count: number } }
+  }>()
 
   function handleKeydown(event) {
     if (!$slashVisible) return
@@ -57,6 +62,7 @@
         },
       },
       content: value || '',
+      autofocus: true,
       extensions: [
         StarterKit,
         Link,
@@ -70,9 +76,19 @@
       },
       onUpdate: ({ editor }) => {
         value = editor.getHTML()
+        count = editor.getCharacterCount()
+        dispatch('change', {
+          value: {
+            html: value,
+            raw: editor.getText(),
+            count,
+          },
+        })
         isEmpty = editor.isEmpty
+        value = isEmpty ? '' : value
       },
     })
+    count = editor.getCharacterCount()
   })
 
   onDestroy(() => {

@@ -1,26 +1,30 @@
 <script>
+  import { clamp } from '$lib/utils/math'
   import { portal } from 'svelte-portal'
   import { expoOut } from 'svelte/easing'
 
-  import { fade, fly, slide } from 'svelte/transition'
+  import { fly, slide } from 'svelte/transition'
 
   export let selectedIndex = 0
-  import {
-    slashVisible,
-    slashItems,
-    slashLocation,
-    slashProps,
-  } from './stores'
+  import { slashVisible, slashItems, slashLocation, slashProps } from './stores'
 
   let height = 0
+  let width = 0
   let wrapperHeight = 0
+  let wrapperWidth = 0
 
   let elements = []
 
   $: invert = ($slashLocation.y || 0) + wrapperHeight > height || 0
+
+  $: left = clamp({
+    min: 0,
+    max: width - 28,
+    val: $slashLocation.x + wrapperWidth,
+  })
 </script>
 
-<svelte:window bind:innerHeight={height} />
+<svelte:window bind:innerHeight={height} bind:innerWidth={width} />
 
 {#if $slashVisible}
   <div
@@ -29,25 +33,24 @@
     use:portal
   />
   <div
-    class="bg-white border rounded max-w-full border-gray-300 shadow max-h-72 w-96 z-999 absolute overflow-auto dark:bg-dark-800 dark:border-dark-100"
+    class="bg-white border rounded border-gray-300 shadow max-h-72 w-72 z-999 absolute overflow-auto backdrop-filter backdrop-blur-md !bg-opacity-60 dark:bg-dark-800 dark:border-dark-100"
     use:portal
     transition:fly|local={{ duration: 200, y: 5, easing: expoOut }}
     bind:clientHeight={wrapperHeight}
-    style="left: {$slashLocation.x}px; top: {invert
+    bind:clientWidth={wrapperWidth}
+    style="max-width: 100%; left: {left - wrapperWidth}px; top: {invert
       ? $slashLocation.y - $slashLocation.height - wrapperHeight
       : $slashLocation.y + $slashLocation.height}px;"
   >
-    <div
-      class="bg-white font-bold text-sm p-2 top-0 left-0 text-slate-500 sticky uppercase dark:bg-dark-800"
-    >
-      Blocks
-    </div>
+    <!-- <div class="font-bold text-sm p-2 top-0 left-0 text-slate-500 uppercase">
+      Bloques
+    </div> -->
     {#if $slashItems.length}
       {#each $slashItems as { title, subtitle, command, icon }, i (title)}
         <div
           class="p-3 cursor-pointer {i == selectedIndex
-            ? 'bg-gray-200 dark:bg-dark-400'
-            : 'bg-white dark:bg-dark-800'}"
+            ? 'bg-gray-100 dark:bg-dark-100 !bg-opacity-50'
+            : ''}"
           transition:slide|local={{ duration: 200, easing: expoOut }}
           on:mouseenter={() => (selectedIndex = i)}
           on:click={() => {
@@ -62,7 +65,7 @@
             {/if}
             <div class="flex flex-col">
               <div class="font-bold text-sm">{title}</div>
-              <div class="text-xs text-slate-500">
+              <div class="text-xs opacity-75">
                 {subtitle ? subtitle : ''}
               </div>
             </div>
@@ -71,7 +74,7 @@
       {/each}
     {:else}
       <div class="w-full p-3">
-        <div class="font-bold text-center text-slate-500">Nothing found</div>
+        <div class="font-bold text-center opacity-50">No se encuentra nada</div>
       </div>
     {/if}
   </div>

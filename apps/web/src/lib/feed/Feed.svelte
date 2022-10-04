@@ -14,6 +14,7 @@
   import { expoOut } from 'svelte/easing'
   import { fly, blur, fade } from 'svelte/transition'
   import Information from './Information.svelte'
+  import Posts from './Posts.svelte'
 
   export let spa = false
 
@@ -106,6 +107,8 @@
     >
       {#if feedPage == 'information'}
         <Information {editable} />
+      {:else}
+        <Posts {editable} />
       {/if}
     </div>
   {/key}
