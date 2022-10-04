@@ -14,7 +14,7 @@ export const GET: RequestHandler = async (event) => {
       (await fetchPlaceFromURL(event.url, createTRPCClient(fetch, true)))
         ?.place || null
   }
-  const icon = place?.favicon || '/images/logo.svg'
+  const icon = place?.logo || '/images/logo.svg'
   const iconsRes = [36, 48, 72, 96, 144, 192, 256, 384, 512]
   const getIcon = (res: number) =>
     imageBuilder(icon, {
