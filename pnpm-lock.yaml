@@ -80,6 +80,7 @@ importers:
       '@tiptap/starter-kit': ^2.0.0-beta.191
       '@tiptap/suggestion': ^2.0.0-beta.97
       '@trpc/client': 10.0.0-proxy-beta.9
+      '@trpc/server': 10.0.0-proxy-beta.8
       '@upstash/redis': ^1.6.1
       '@windicss/plugin-animations': ^1.0.9
       '@windicss/plugin-icons': ^1.0.2
@@ -143,7 +144,8 @@ importers:
       '@tiptap/extension-list-item': 2.0.0-beta.23_jdrcmhoxj44u3cq7gnenksjiqq
       '@tiptap/starter-kit': 2.0.0-beta.191
       '@tiptap/suggestion': 2.0.0-beta.97_jdrcmhoxj44u3cq7gnenksjiqq
-      '@trpc/client': 10.0.0-proxy-beta.9
+      '@trpc/client': 10.0.0-proxy-beta.9_cdx7h2ttezqb2726q3auebavzi
+      '@trpc/server': 10.0.0-proxy-beta.8
       '@upstash/redis': 1.12.0_encoding@0.1.13
       carbon-icons-svelte: 10.45.1
       cookie: 0.5.0
@@ -1172,10 +1174,12 @@ packages:
       prosemirror-view: 1.26.2
     dev: false
 
-  /@trpc/client/10.0.0-proxy-beta.9:
+  /@trpc/client/10.0.0-proxy-beta.9_cdx7h2ttezqb2726q3auebavzi:
     resolution: {integrity: sha512-bCj79s+z3UHfxxBMX40jS1g/satQamWgu3Ge+K+Szt435xi8IenuNshV54jk7VB0XpXXOUpqCY4pRrM8XG0PgA==}
     peerDependencies:
       '@trpc/server': 10.0.0-proxy-beta.9
+    dependencies:
+      '@trpc/server': 10.0.0-proxy-beta.8
     dev: false
 
   /@trpc/server/10.0.0-proxy-beta.8:

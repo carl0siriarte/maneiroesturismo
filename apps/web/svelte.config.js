@@ -1,6 +1,6 @@
 import preprocess from 'svelte-preprocess'
-import { optimizeImports } from 'carbon-preprocess-svelte'
 import vercel from '@sveltejs/adapter-vercel'
+import { optimizeImports } from 'carbon-preprocess-svelte'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
