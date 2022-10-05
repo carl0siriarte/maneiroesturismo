@@ -2,18 +2,36 @@
   import { page } from '$app/stores'
   import { createPageContextStore, pageContext } from '$lib'
   import { tooltip } from '$lib/components/tooltip'
-  import { Image16, Image32, Map24 } from 'carbon-icons-svelte'
+  import {
+    EventSchedule16,
+    Home16,
+    Image16,
+    Image32,
+    Information16,
+    Map24,
+  } from 'carbon-icons-svelte'
   import { setContext } from 'svelte'
   import { expoOut } from 'svelte/easing'
   import { fade } from 'svelte/transition'
   import Information from './Information.svelte'
-  import { feedPages, getFeedPageIcon } from './pages'
+  import { feedPages } from './pages'
   import Posts from './Posts.svelte'
 
   export let spa = false
 
   $: feedPage =
     (spa ? $page.url.searchParams.get('feed') : $page.params.feedPage) || ''
+
+  /** @param {string | import('.').FeedPageId} id */
+  function getFeedPageIcon(id) {
+    if (id == 'events') {
+      return EventSchedule16
+    } else if (id == 'information') {
+      return Information16
+    } else {
+      return Home16
+    }
+  }
 
   export let editable = false
 

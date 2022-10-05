@@ -2,16 +2,10 @@ import { sveltekit } from '@sveltejs/kit/vite'
 import svg from '@poppanator/sveltekit-svg'
 import WindiCSS from 'vite-plugin-windicss'
 import { defineConfig } from 'vite'
-import { VitePluginFonts } from 'vite-plugin-fonts'
 
 export default defineConfig({
   plugins: [
     sveltekit(),
-    VitePluginFonts({
-      google: {
-        families: ['Source Sans Pro'],
-      },
-    }),
     WindiCSS({
       config: '../../windi.config.js',
     }),
