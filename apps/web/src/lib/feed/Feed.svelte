@@ -209,7 +209,7 @@
   </div>
   {#key feedPage}
     <div
-      class="flex flex-col w-full px-4 lg:px-[20%]"
+      class="flex flex-col w-full px-4 pb-4 lg:px-[20%]"
       in:fade={{ duration: 600, easing: expoOut }}
       class:pt-152px={scrollY >= coverHeight}
       class:!lg:pt-104px={scrollY >= coverHeight}
