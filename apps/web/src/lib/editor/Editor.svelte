@@ -62,7 +62,6 @@
         },
       },
       content: value || '',
-      autofocus: true,
       extensions: [
         StarterKit,
         Link,
