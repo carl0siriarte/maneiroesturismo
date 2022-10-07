@@ -129,3 +129,31 @@ input[type='color']::-webkit-color-swatch-wrapper {
   left: 0;
   animation: skeleton-loading 1.2s infinite;
 }
+
+.text-block a {
+  @apply cursor-pointer text-blue-400;
+}
+.text-block a:hover {
+  text-decoration: underline;
+}
+
+.text-block h1,
+.text-block h2,
+.text-block h3 {
+  @apply font-bold font-title;
+}
+
+.text-block h1 {
+  @apply text-2xl;
+  line-height: 0 !important;
+}
+.text-block h2 {
+  @apply text-xl;
+}
+.text-block h3 {
+  @apply text-lg;
+}
+
+.text-block ul {
+  @apply list-disc pl-6;
+}

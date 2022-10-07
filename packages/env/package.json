@@ -1,5 +1,5 @@
 {
-  "name": "@pkg/shared",
+  "name": "@pkg/env",
   "version": "1.0.0",
   "files": [
     "./dist/**/*"
@@ -24,15 +24,6 @@
     "@types/node": "^18.7.1",
     "dotenv": "^16.0.1",
     "typescript": "^4.7.4",
-    "vite": "3.0.8",
-    "vite-dts": "^1.0.4",
-    "vite-plugin-dts": "^1.4.1"
-  },
-  "dependencies": {
-    "@pkg/env": "workspace:^1.0.0",
-    "@supabase/supabase-js": "^1.35.3",
-    "fetch-undici": "^3.0.1",
-    "tsup": "^6.2.2",
-    "undici": "^5.10.0"
+    "tsup": "^6.2.2"
   }
 }

@@ -17,6 +17,6 @@ export const feedPages = [
 
 export type FeedPageId = UnwrapArray<typeof feedPages>['id']
 
-export function getFeedPageTitle(id?: string) {
-  return feedPages.find((p) => p.id == id || '')?.title
+export function getFeedPageTitle(id: string = '') {
+  return feedPages.find((p) => p.id == id)?.title
 }

@@ -104,6 +104,9 @@ export async function listPosts(
       where,
       take: pageSize,
       skip: pageSize * Math.max(page - 1, 0),
+      orderBy: {
+        createdAt: 'desc',
+      },
     }),
   ])
   return { count, items }

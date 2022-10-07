@@ -2,10 +2,15 @@
   import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import Header from './Header.svelte'
+
+  let headerHeight = 0
 </script>
 
-<div class="flex flex-col min-h-screen w-full justify-between">
-  <Header />
+<div
+  class="flex flex-col min-h-screen w-full justify-between"
+  style:--header-height="{headerHeight}px"
+>
+  <Header bind:headerHeight />
   {#key $page.routeId}
     <div
       class="flex-grow flex flex-col h-full"

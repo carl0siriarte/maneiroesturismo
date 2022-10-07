@@ -1,20 +1,26 @@
-<script>
+<script lang="ts">
+  import { browser } from '$app/environment'
   import { page } from '$app/stores'
   import { createPageContextStore, pageContext } from '$lib'
   import { tooltip } from '$lib/components/tooltip'
   import {
+    ChevronDown24,
+    Close16,
     EventSchedule16,
     Home16,
     Image16,
     Image32,
     Information16,
+    Map16,
     Map24,
+    Search16,
   } from 'carbon-icons-svelte'
-  import { setContext } from 'svelte'
+  import { onMount, setContext, afterUpdate } from 'svelte'
   import { expoOut } from 'svelte/easing'
-  import { fade } from 'svelte/transition'
+  import { fade, fly, slide } from 'svelte/transition'
   import Information from './Information.svelte'
   import { feedPages } from './pages'
+  import PostEditor from './PostEditor.svelte'
   import Posts from './Posts.svelte'
 
   export let spa = false
@@ -43,10 +49,20 @@
       initialState: $pageContext.context.placeData,
     })
   )
+
+  let search = ''
+
+  let scrollY = 0
+  let coverHeight = 0
+
+  let showControls = false
 </script>
+
+<svelte:window bind:scrollY />
 
 <div
   class="bg-gradient-to-br flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
+  bind:clientHeight={coverHeight}
 >
   {#if editable}
     <div class="flex h-full w-full relative">
@@ -61,41 +77,144 @@
   {/if}
 </div>
 
-<div class="flex flex-col space-y-8 w-full p-4 relative lg:px-[20%]">
-  <div class="flex flex-col space-y-6 w-full">
-    <div class="flex w-full justify-between">
+<div class="flex flex-col space-y-6 w-full relative">
+  <div
+    class="flex flex-col top-[calc(var(--header-height))] w-full pb-0 z-20"
+    class:fixed={scrollY >= coverHeight && browser}
+  >
+    <div
+      class="flex bg-gray-100 h-[calc(100%)] w-full absolute backdrop-blur-md backdrop-filter  !bg-opacity-75 dark:bg-dark-800"
+      class:hidden={scrollY < coverHeight}
+    />
+    <div class="min-h-38px px-4 pt-4 relative lg:px-[20%]">
       <div
-        class="rounded-full flex bg-gray-100 border-2 border-gray-300 shadow-lg -mt-14 min-h-24 min-w-24 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
-        title="Cambiar imagen"
-        use:tooltip
+        class="flex w-full pb-4 relative items-start justify-end"
+        class:!lg:justify-between={scrollY >= coverHeight}
       >
-        <Image32 />
-      </div>
-      <div class="flex space-x-4 items-center">
-        {#each feedPages as link}
-          {@const active = feedPage == link.id}
-          <a
-            class="border-transparent flex space-x-2 border-b-2 pb-1 duration-200 items-center hover:border-current"
-            class:border-current={active}
-            href="{spa ? '?feed=' : '/'}{link.id}"
+        {#if scrollY < coverHeight}
+          <div
+            class="rounded-full flex bg-gray-100 border-2 border-gray-300 shadow-lg -mt-18 min-h-24 min-w-24 transform origin-top-left left-0 duration-200 absolute items-center justify-center dark:bg-dark-400 dark:border-dark-100"
+            title="Cambiar imagen"
+            style="will-change: width, height"
+            class:!min-h-16={scrollY >= coverHeight}
+            class:!min-w-16={scrollY >= coverHeight}
+            class:!h-16={scrollY >= coverHeight}
+            class:!w-16={scrollY >= coverHeight}
+            use:tooltip
           >
-            <svelte:component this={getFeedPageIcon(link.id)} />
-            <span class="flex font-bold text-xs">{link.title}</span>
-          </a>
-        {/each}
+            <Image32 />
+          </div>
+        {:else}
+          <div
+            class="flex space-x-2 w-full items-center"
+            in:fly={{ y: 10, duration: 200 }}
+          >
+            <Map16 />
+            <h2
+              class="font-bold font-title text-black text-xs dark:text-white "
+            >
+              {$pageContext.context.place?.name}
+            </h2>
+          </div>
+        {/if}
+        <div class="flex space-x-4 items-center">
+          {#each feedPages as link}
+            {@const active = feedPage == link.id}
+            <a
+              class="border-transparent flex space-x-2 border-b-2 pb-1 duration-200 items-center hover:border-current"
+              class:border-current={active}
+              href="{spa ? '?feed=' : '/'}{link.id}"
+            >
+              <svelte:component this={getFeedPageIcon(link.id)} />
+              <span class="flex font-bold text-xs">{link.title}</span>
+            </a>
+          {/each}
+        </div>
       </div>
-    </div>
-    <div class="flex space-x-4 mb-8 w-full items-center">
-      <Map24 />
-      <h2 class="font-bold font-title text-black text-2xl dark:text-white ">
-        {$pageContext.context.place?.name}
-      </h2>
+      <div
+        class="border-b flex flex-col space-y-6 border-gray-300 pb-4 top-[calc(var(--header-height)+56px)] z-20  sticky dark:border-dark-100"
+      >
+        <div
+          class="flex w-full justify-between <lg:flex-col <lg:space-y-4"
+          class:!justify-between={scrollY < coverHeight}
+        >
+          {#if scrollY < coverHeight}
+            <div class="flex space-x-4 w-full items-center">
+              <Map24 />
+              <h2
+                class="font-bold font-title text-black text-2xl dark:text-white "
+              >
+                {$pageContext.context.place?.name}
+              </h2>
+            </div>
+          {/if}
+          {#if feedPage != 'information'}
+            <div class="w-full relative">
+              <div
+                class="flex space-x-2 w-full px-3 inset-0 absolute pointer-events-none items-center justify-end"
+              >
+                {#if search}
+                  <button
+                    type="button"
+                    class="pointer-events-auto"
+                    title="Limpiar búsqueda"
+                    transition:fly={{ y: 2, duration: 200 }}
+                    use:tooltip
+                  >
+                    <Close16 />
+                  </button>
+                {/if}
+                <button
+                  type="button"
+                  class="pointer-events-auto"
+                  title="Realizar búsqueda"
+                  class:opacity-50={!search}
+                  use:tooltip
+                >
+                  <Search16 />
+                </button>
+              </div>
+              <input
+                class="bg-white border rounded border-gray-300 text-xs leading-tight w-full py-2 px-3 pr-[calc(24px+24px+16px)] appearance-none dark:bg-dark-700 dark:border-dark-400 focus:outline-none focus:shadow-outline disabled:bg-gray-200 disabled:text-gray-500 disabled:dark:bg-dark-900"
+                type="text"
+                pattern="(https?|http?|/).*?"
+                autocomplete="nooooope"
+                aria-autocomplete="none"
+                placeholder="Buscar..."
+                bind:value={search}
+              />
+            </div>
+          {/if}
+        </div>
+        {#if editable && feedPage != 'information'}
+          {#if scrollY < coverHeight || showControls}
+            <div class="flex flex-col w-full" in:fade|local={{ duration: 200 }}>
+              <PostEditor />
+            </div>
+          {/if}
+          {#if scrollY >= coverHeight}
+            <button
+              class="mx-auto transform text-gray-400 hover:text-dark-900 dark:hover:text-gray-100"
+              title="Mostrar/ocultar controles"
+              use:tooltip
+              class:rotate-180={showControls}
+              on:click={() => (showControls = !showControls)}
+            >
+              <ChevronDown24 />
+            </button>
+          {/if}
+        {/if}
+      </div>
     </div>
   </div>
   {#key feedPage}
     <div
-      class="flex flex-col w-full"
+      class="flex flex-col w-full px-4 lg:px-[20%]"
       in:fade={{ duration: 600, easing: expoOut }}
+      class:pt-152px={scrollY >= coverHeight}
+      class:!lg:pt-104px={scrollY >= coverHeight}
+      class:!pt-282px={scrollY >= coverHeight && editable}
+      class:!lg:pt-234px={scrollY >= coverHeight && editable}
     >
       {#if feedPage == 'information'}
         <Information {editable} />

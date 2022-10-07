@@ -1,77 +1,98 @@
 <script lang="ts">
   import { tooltip } from '$lib/components/tooltip'
-  import Editor from '$lib/editor/Editor.svelte'
-  import { Document16, Image24 } from 'carbon-icons-svelte'
+  import { pageContext } from '$lib/stores'
+  import { trpc } from '$lib/trpc/client'
+  import type { RouterTypes } from '@pkg/trpc'
+  import { ArrowDown24, Road24 } from 'carbon-icons-svelte'
+  import { onMount, tick } from 'svelte'
+  import { expoOut } from 'svelte/easing'
+  import { fly } from 'svelte/transition'
+  import PostCard from './PostCard.svelte'
+  import PostEditor from './PostEditor.svelte'
 
   export let editable = false
+  export let page = 2
 
-  let value = ''
-  let count = 0
+  export let data: RouterTypes['posts']['list']['output'] | undefined =
+    undefined
+  let fetching = false
+
+  export let pageSize = 10
+
+  let waitTimeout: NodeJS.Timeout
+
+  async function fetchData() {
+    waitTimeout = setTimeout(() => {
+      fetching = true
+      tick()
+    }, 100)
+    page = page + 1
+    const newData = await trpc.posts.list.query({
+      placeId: $pageContext.context.place?.id || '',
+      pageSize,
+      page,
+    })
+    const merged = [...(data?.items || []), ...newData.items]
+    // const unique = new Set(merged.map(i => i.id))
+    data = {
+      count: newData.count,
+      items: merged,
+    }
+    clearTimeout(waitTimeout)
+    fetching = false
+  }
+
+  onMount(() => {
+    if (!data) {
+      page = 0
+      fetchData()
+    }
+  })
 </script>
 
-{#if editable}
-  <div
-    class="border-b space-y-2 bg-gray-100 border-gray-300 pb-2 dark:bg-dark-800 dark:border-dark-100"
-  >
-    <div class="flex font-bold space-x-2 text-xs pb-2 items-center">
-      <Document16 class="flex" />
-      <span>Redactar publicación</span>
-    </div>
-    <div
-      class="bg-white border rounded text-sm text-block p-2 rouded dark:bg-dark-400 dark:border-dark-100"
-    >
-      <Editor bind:value bind:count />
-    </div>
-    <div class="flex w-full justify-between items-center">
-      <div
-        class="font-bold text-xs text-gray-400 duration-100 animate-duration-800"
-        class:!text-red-500={count >= 500}
-        class:animate-head-shake={count >= 500}
-      >
-        {count}/500 caracteres
-      </div>
-      <div class="flex space-x-4 items-center">
+<div class="flex flex-col w-full relative">
+  <div />
+
+  <div class="flex flex-col space-y-8 w-full">
+    {#if data}
+      {#each data.items as post (post.id)}
+        <div
+          class="flex flex-col w-full"
+          in:fly|local={{ duration: 400, y: 5, easing: expoOut }}
+        >
+          <PostCard {post} />
+        </div>
+      {/each}
+    {/if}
+    {#if fetching || !data}
+      {#each Array.from({ length: pageSize }) as _}
+        <div
+          class="flex flex-col w-full"
+          in:fly|local={{ duration: 400, y: 5, easing: expoOut }}
+        >
+          <PostCard />
+        </div>
+      {/each}
+    {/if}
+    {#if data?.items.length != data?.count}
+      <div class="flex w-full justify-center">
         <button
-          class="flex text-gray-400 relative hover:text-black dark:hover:text-white"
-          title="Subir imagen"
+          class="flex flex-col space-y-2 text-gray-500 duration-100 items-center justify-center hover:text-dark-900 hover:underline dark:hover:text-white"
+          title="Cargar más publicaciones"
           use:tooltip
+          on:click={fetchData}
         >
-          <Image24 />
+          <span class="text-xs">Cargar más</span>
+          <ArrowDown24 />
         </button>
-        <button
-          class="rounded font-bold ml-auto border-2 border-blue-500 text-xs py-1 px-2 text-blue-500 duration-200 disabled:cursor-not-allowed disabled:opacity-50 not-disabled:hover:bg-blue-500 not-disabled:hover:text-white"
-          >Publicar</button
-        >
       </div>
-    </div>
+    {:else if !fetching && data}
+      <div
+        class="flex flex-col space-y-2 w-full text-gray-500 justify-center items-center"
+      >
+        <p class="text-xs text-center">Eso es todo</p>
+        <Road24 />
+      </div>
+    {/if}
   </div>
-{/if}
-
-<style>
-  .text-block :global(a) {
-    @apply cursor-pointer text-blue-400;
-  }
-  .text-block :global(a:hover) {
-    text-decoration: underline;
-  }
-
-  .text-block :global(h1),
-  .text-block :global(h2),
-  .text-block :global(h3) {
-    @apply font-bold font-title;
-  }
-
-  .text-block :global(h1) {
-    @apply text-2xl;
-  }
-  .text-block :global(h2) {
-    @apply text-xl;
-  }
-  .text-block :global(h3) {
-    @apply text-lg;
-  }
-
-  .text-block :global(ul) {
-    @apply list-disc pl-6;
-  }
-</style>
+</div>

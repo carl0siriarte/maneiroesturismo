@@ -1,0 +1,7 @@
+export const LOCALHOST_HOST = process.env.LOCALHOST_HOST
+export const VERCEL_URL = process.env.VERCEL_URL
+export const PUBLIC_SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL
+export const PUBLIC_SUPABASE_ANON_KEY = process.env.PUBLIC_SUPABASE_ANON_KEY
+export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
+export const PUBLIC_UPSTASH_REDIS_URL = process.env.PUBLIC_UPSTASH_REDIS_URL
+export const PUBLIC_UPSTASH_REDIS_TOKEN = process.env.PUBLIC_UPSTASH_REDIS_TOKEN

@@ -41,9 +41,11 @@
       title: 'Configuración',
     },
   ]
+
+  export let headerHeight = 0
 </script>
 
-<header>
+<header bind:clientHeight={headerHeight}>
   <div class="dock">
     <a href="/" class="flex transform duration-200 hover:scale-98">
       <Logo />

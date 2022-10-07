@@ -51,7 +51,7 @@
     }
   }
 
-  let element, editor, w
+  let element, editor: Editor, w
 
   onMount(() => {
     editor = new Editor({
@@ -76,7 +76,7 @@
       },
       onUpdate: ({ editor }) => {
         value = editor.getHTML()
-        count = editor.getCharacterCount()
+        count = editor.state.doc.content.size - 2
         dispatch('change', {
           value: {
             html: value,
@@ -88,7 +88,7 @@
         value = isEmpty ? '' : value
       },
     })
-    count = editor.getCharacterCount()
+    count = editor.state.doc.content.size - 2
   })
 
   onDestroy(() => {

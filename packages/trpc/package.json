@@ -28,8 +28,10 @@
   },
   "dependencies": {
     "@pkg/db": "workspace:*",
+    "@pkg/env": "workspace:^1.0.0",
     "@pkg/shared": "workspace:^1.0.0",
     "@sendgrid/mail": "^7.7.0",
+    "@trpc/server": "10.0.0-proxy-beta.8",
     "@upstash/redis": "^1.6.1",
     "bee-queue": "^1.4.0",
     "bullmq": "^1.89.2",
@@ -41,8 +43,6 @@
     "redis": "^4.2.0",
     "stripe": "^9.8.0",
     "undici": "^5.10.0",
-    "zod": "^3.17.3",
-    "@trpc/server": "10.0.0-proxy-beta.8"
-  },
-  "peerDependencies": {}
+    "zod": "^3.17.3"
+  }
 }

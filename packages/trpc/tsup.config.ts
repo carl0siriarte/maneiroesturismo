@@ -8,16 +8,10 @@ config({
 const isProduction = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
-  dts: true,
   entry: ['src/index.ts'],
-  env: {
-    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '',
-    PUBLIC_UPSTASH_REDIS_URL: process.env.PUBLIC_UPSTASH_REDIS_URL || '',
-    PUBLIC_UPSTASH_REDIS_TOKEN: process.env.PUBLIC_UPSTASH_REDIS_TOKEN || '',
-    REDIS_URL: process.env.REDIS_URL || '',
-  },
   format: ['esm'],
   target: 'node16',
   minify: isProduction,
   sourcemap: true,
+  dts: true,
 })

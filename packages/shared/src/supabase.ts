@@ -1,9 +1,10 @@
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '@pkg/env'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.PUBLIC_SUPABASE_ANON_KEY
-
-export const client = createClient(supabaseUrl || '', supabaseAnonKey || '')
+export const client = createClient(
+  PUBLIC_SUPABASE_URL || '',
+  PUBLIC_SUPABASE_ANON_KEY || ''
+)
 
 export const removeFiles = async ({
   paths,

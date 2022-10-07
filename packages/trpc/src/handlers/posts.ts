@@ -9,7 +9,7 @@ const createPostInput = z.object({
   placeId: z.string(),
   content: z.string(),
   thumbnail: z.string().nullable(),
-  placeEventId: z.string(),
+  placeEventId: z.string().nullable(),
 })
 
 const createPost = authProcedure

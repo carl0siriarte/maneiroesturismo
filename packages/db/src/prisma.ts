@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 
 export function createPrismaClient(url?: string) {
   return new PrismaClient({
@@ -15,5 +15,4 @@ export async function setPrismaDatabaseURL(url: string) {
   prisma = createPrismaClient(url)
 }
 
-export { Prisma, PrismaClient } from '@prisma/client'
-export { prisma }
+export { prisma, Prisma, PrismaClient }

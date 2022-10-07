@@ -5,11 +5,16 @@
   import { getAbsoluteURL } from '$lib/utils/host'
   import { fade } from 'svelte/transition'
   import Header from './Header.svelte'
+
+  let headerHeight = 0
 </script>
 
-<div class="flex flex-col min-h-screen w-full justify-between">
+<div
+  class="flex flex-col min-h-screen w-full justify-between"
+  style:--header-height="{headerHeight}px"
+>
   {#if !$page.url.pathname.startsWith('/login')}
-    <Header />
+    <Header bind:headerHeight />
   {/if}
   {#if $page.data.showFeed}
     <div

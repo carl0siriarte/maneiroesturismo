@@ -1,4 +1,4 @@
-import { getFeedPageTitle } from '$lib/feed'
+import { feedPages, getFeedPageTitle } from '$lib/feed'
 import { createTRPCClient } from '$lib/trpc/client'
 import type { PageLoad } from './$types'
 

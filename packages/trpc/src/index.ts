@@ -1,10 +1,11 @@
 import './polyfill.js'
 
-import * as _db from '@pkg/db'
+export * as _db from '@pkg/db'
 
+import { SENDGRID_API_KEY } from '@pkg/env'
 import sendgrid from '@sendgrid/mail'
 
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY || '')
+sendgrid.setApiKey(SENDGRID_API_KEY || '')
 
 import type { GetInferenceHelpers } from '@trpc/server'
 import { t } from './router.js'

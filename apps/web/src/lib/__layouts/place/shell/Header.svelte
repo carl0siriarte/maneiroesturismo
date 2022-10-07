@@ -13,12 +13,14 @@
     Sun24,
     UserAvatar24,
   } from 'carbon-icons-svelte'
+
+  export let headerHeight = 0
 </script>
 
-<header>
+<header bind:clientHeight={headerHeight}>
   <div class="dock">
     <a href="/" class="flex transform duration-200 hover:scale-98">
-      <Logo place={$pageContext.context.place || undefined} />
+      <Logo />
     </a>
     <div class="flex space-x-4 items-center">
       {#if $user}

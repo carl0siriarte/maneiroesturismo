@@ -1,5 +1,6 @@
 import { Redis } from '@upstash/redis'
 import { setPrismaDatabaseURL, prisma } from '@pkg/db'
+import { PUBLIC_UPSTASH_REDIS_URL, PUBLIC_UPSTASH_REDIS_TOKEN } from '@pkg/env'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { ZodError } from 'zod'
 import transformer from 'trpc-transformer'
@@ -73,8 +74,8 @@ export const redisMiddleware = t.middleware(async ({ ctx, next }) => {
     ctx: {
       ...ctx,
       redis: new Redis({
-        url: process.env.PUBLIC_UPSTASH_REDIS_URL || '',
-        token: process.env.PUBLIC_UPSTASH_REDIS_TOKEN || '',
+        url: PUBLIC_UPSTASH_REDIS_URL || '',
+        token: PUBLIC_UPSTASH_REDIS_TOKEN || '',
       }),
     },
   })
