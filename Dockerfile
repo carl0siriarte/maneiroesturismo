@@ -27,7 +27,7 @@ ENV SECRET_TOKEN=${SECRET_TOKEN}
 
 RUN apk update && apk add git
 WORKDIR /app
-RUN npm i -g turbo@canary pnpm
+RUN npm i -g turbo pnpm
 # COPY --from=builder /app/out/json/ .
 # COPY --from=builder /app/out/yarn.lock ./yarn.lock
 # COPY --from=builder /app/out/full/ .
