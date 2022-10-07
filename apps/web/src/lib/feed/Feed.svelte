@@ -3,6 +3,7 @@
   import { page } from '$app/stores'
   import { createPageContextStore, pageContext } from '$lib'
   import { tooltip } from '$lib/components/tooltip'
+  import type { Post } from '@pkg/db'
   import {
     ChevronDown24,
     Close16,
@@ -56,6 +57,8 @@
   let coverHeight = 0
 
   let showControls = false
+
+  let pushPost: (post: Post) => void | undefined
 </script>
 
 <svelte:window bind:scrollY />
@@ -189,7 +192,11 @@
         {#if editable && feedPage != 'information'}
           {#if scrollY < coverHeight || showControls}
             <div class="flex flex-col w-full" in:fade|local={{ duration: 200 }}>
-              <PostEditor />
+              <PostEditor
+                on:create={({ detail }) => {
+                  pushPost?.(detail)
+                }}
+              />
             </div>
           {/if}
           {#if scrollY >= coverHeight}
@@ -219,7 +226,7 @@
       {#if feedPage == 'information'}
         <Information {editable} />
       {:else}
-        <Posts {editable} />
+        <Posts {editable} bind:pushPost />
       {/if}
     </div>
   {/key}

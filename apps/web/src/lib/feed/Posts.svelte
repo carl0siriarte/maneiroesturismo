@@ -2,6 +2,7 @@
   import { tooltip } from '$lib/components/tooltip'
   import { pageContext } from '$lib/stores'
   import { trpc } from '$lib/trpc/client'
+  import type { Post } from '@pkg/db'
   import type { RouterTypes } from '@pkg/trpc'
   import { ArrowDown24, Road24 } from 'carbon-icons-svelte'
   import { onMount, tick } from 'svelte'
@@ -40,6 +41,13 @@
     }
     clearTimeout(waitTimeout)
     fetching = false
+  }
+
+  export function pushPost(post: Post) {
+    data = {
+      count: (data?.count || 0) + 1,
+      items: [post, ...(data?.items || [])],
+    }
   }
 
   onMount(() => {
