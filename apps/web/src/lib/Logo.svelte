@@ -7,7 +7,7 @@
   export let anim = true
 </script>
 
-<Viewport class="flex space-x-4 items-center" --a-t="600ms" oneWay>
+<Viewport class="flex space-x-4 items-center" --a-t="600ms" once>
   <div class="flex space-x-2 items-center">
     <div class="flex" class:anim style:--anim-s="0.1" style:--anim-d="100ms">
       {#if place}

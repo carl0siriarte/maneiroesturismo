@@ -63,6 +63,7 @@ importers:
 
   apps/web:
     specifiers:
+      '@event-calendar/core': ^0.11.2
       '@paypal/paypal-js': ^5.0.6
       '@pkg/db': workspace:1.0.0
       '@pkg/shared': workspace:^1.0.0
@@ -131,6 +132,7 @@ importers:
       windicss: ^3.5.1
       zod: ^3.17.3
     dependencies:
+      '@event-calendar/core': 0.11.2
       '@paypal/paypal-js': 5.1.1
       '@pkg/db': link:../../packages/db
       '@pkg/shared': link:../../packages/shared
@@ -407,6 +409,19 @@ packages:
     os: [linux]
     requiresBuild: true
     optional: true
+
+  /@event-calendar/common/0.11.2:
+    resolution: {integrity: sha512-UGo4PsgeAG1xIhlonUFfRRXC9tC+aqhV2qdg6qRzzRxxx2UBtoRkvmyqj2ip4SpBj32aB3QS8Y9oJGUZeakp7A==}
+    dependencies:
+      svelte: 3.49.0
+    dev: false
+
+  /@event-calendar/core/0.11.2:
+    resolution: {integrity: sha512-BBQ+K1tE92VfASzD5d36rH5WZRD02dMR5aD/mPoJ8fQ1IM7ccxH4mHm7NHK3JYTmtBKCjhhIM/Q0Ri6BawFdOA==}
+    dependencies:
+      '@event-calendar/common': 0.11.2
+      svelte: 3.49.0
+    dev: false
 
   /@fastify/ajv-compiler/3.1.2:
     resolution: {integrity: sha512-m2nzzQJeuVmeGOB9rnII9sZiY8AZ02a9WMQfMBfK1jxdFnxm3FPYKGbYpPjODj4halNogwpolyugbTNpnDCi0A==}

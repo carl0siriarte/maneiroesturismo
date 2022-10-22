@@ -1,6 +1,5 @@
 <script>
-  /** @type {import('./$types').PageData} */
-  export let data
+  import Login from '$lib/__app/Login.svelte'
 </script>
 
-<svelte:component this={data.loginPage} />
+<Login />

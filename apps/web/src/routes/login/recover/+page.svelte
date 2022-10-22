@@ -1,6 +1,5 @@
 <script>
-  /** @type {import('./$types').PageData} */
-  export let data
+  import LoginRecover from '$lib/__app/LoginRecover.svelte'
 </script>
 
-<svelte:component this={data.loginPage} />
+<LoginRecover />

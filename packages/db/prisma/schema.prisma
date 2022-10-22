@@ -3,14 +3,13 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
+  previewFeatures = ["interactiveTransactions"]
   binaryTargets   = ["debian-openssl-1.1.x", "linux-musl"]
 }
 
 datasource db {
-  provider             = "postgres"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider = "postgres"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -159,10 +158,14 @@ model Comment {
 
   createdAt     DateTime        @default(now())
   CommentOnPost CommentOnPost[]
+
+  replyToId String?
+  replyTo   Comment?  @relation("replies", fields: [replyToId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("replies")
 }
 
 model CommentOnPost {
-  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  comment   Comment @relation(fields: [commentId], references: [id])
   post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
   commentId String
   postId    String

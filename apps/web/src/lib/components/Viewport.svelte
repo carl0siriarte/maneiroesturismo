@@ -6,8 +6,12 @@
   export let style = ''
   export { className as class }
   export let intersecting = true
+  export let animate = true
   export let oneWay = false
+  export let once = false
   export let threshold = 0
+
+  let intersectedOnce = false
 
   $: bot = browser
     ? !!navigator.userAgent.match(
@@ -28,7 +32,12 @@
           }
           return
         }
-        intersecting = entries[0].isIntersecting
+        if (!intersectedOnce) {
+          intersecting = entries[0].isIntersecting
+        }
+        if (once && intersecting) {
+          intersectedOnce = true
+        }
       },
       { threshold }
     )
@@ -41,9 +50,15 @@
   }
 </script>
 
-<div class={className} use:viewport class:intersecting class:bot {style}>
-  <slot />
-</div>
+{#if animate}
+  <div class={className} use:viewport class:intersecting class:bot {style}>
+    <slot />
+  </div>
+{:else}
+  <div class={className} class:intersecting={true} {style}>
+    <slot />
+  </div>
+{/if}
 
 <style>
   div {

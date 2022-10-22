@@ -16,15 +16,19 @@
     Map24,
     Search16,
   } from 'carbon-icons-svelte'
-  import { onMount, setContext, afterUpdate } from 'svelte'
-  import { expoOut } from 'svelte/easing'
-  import { fade, fly, slide } from 'svelte/transition'
+  import { createEventDispatcher, setContext } from 'svelte'
+  import { portal } from 'svelte-portal'
+  import { backOut, expoOut } from 'svelte/easing'
+  import { fade, fly, scale, slide } from 'svelte/transition'
+  import Calendar from './Calendar.svelte'
   import Information from './Information.svelte'
   import { feedPages } from './pages'
+  import PostCard from './PostCard.svelte'
   import PostEditor from './PostEditor.svelte'
   import Posts from './Posts.svelte'
 
   export let spa = false
+  export let post: Post | null
 
   $: feedPage =
     (spa ? $page.url.searchParams.get('feed') : $page.params.feedPage) || ''
@@ -59,6 +63,12 @@
   let showControls = false
 
   let pushPost: (post: Post) => void | undefined
+
+  type Events = {
+    closePostModal: void
+  }
+
+  const dispatcher = createEventDispatcher<Events>()
 </script>
 
 <svelte:window bind:scrollY />
@@ -79,6 +89,31 @@
     </div>
   {/if}
 </div>
+
+{#if post}
+  <div
+    class="flex h-full w-full top-0 z-99 fixed items-center justify-center backdrop-filter backdrop-blur-md"
+    transition:fade|local={{ duration: 400, easing: expoOut }}
+    use:portal
+  >
+    <div
+      class="bg-black h-full w-full opacity-40 absolute"
+      on:click={() => dispatcher('closePostModal')}
+    />
+    <div
+      class="flex flex-col h-full space-y-2 min-w-5/10 w-full max-w-9/10 relative items-center justify-center pointer-events-none lg:max-w-8/10 "
+      in:fly|local={{ y: 20, duration: 400, easing: backOut }}
+      out:scale|local={{ start: 0.2, duration: 200, easing: expoOut }}
+    >
+      <PostCard
+        on:close={() => dispatcher('closePostModal')}
+        {post}
+        noAnimate
+        alt
+      />
+    </div>
+  </div>
+{/if}
 
 <div class="flex flex-col space-y-6 w-full relative">
   <div
@@ -189,7 +224,7 @@
             </div>
           {/if}
         </div>
-        {#if editable && feedPage != 'information'}
+        {#if editable && feedPage == ''}
           {#if scrollY < coverHeight || showControls}
             <div class="flex flex-col w-full" in:fade|local={{ duration: 200 }}>
               <PostEditor
@@ -220,11 +255,13 @@
       in:fade={{ duration: 600, easing: expoOut }}
       class:pt-152px={scrollY >= coverHeight}
       class:!lg:pt-104px={scrollY >= coverHeight}
-      class:!pt-282px={scrollY >= coverHeight && editable}
-      class:!lg:pt-234px={scrollY >= coverHeight && editable}
+      class:!pt-282px={scrollY >= coverHeight && editable && feedPage == ''}
+      class:!lg:pt-234px={scrollY >= coverHeight && editable && feedPage == ''}
     >
       {#if feedPage == 'information'}
         <Information {editable} />
+      {:else if feedPage == 'events'}
+        <Calendar />
       {:else}
         <Posts {editable} bind:pushPost />
       {/if}
