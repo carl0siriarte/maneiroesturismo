@@ -58,9 +58,7 @@
     overflow: auto;
   }
   .day {
-    @apply bg-gray-50;
-    border-bottom: 1px solid rgba(166, 168, 179, 0.12);
-    border-right: 1px solid rgba(166, 168, 179, 0.12);
+    @apply border-b border-r bg-gray-50 border-gray-300;
     text-align: right;
     padding: 14px 20px;
     letter-spacing: 1px;
@@ -69,6 +67,10 @@
     @apply font-bold text-gray-500;
     position: relative;
     z-index: 1;
+  }
+
+  :global(.dark) .day {
+    @apply bg-dark-900 border-dark-100;
   }
 
   :global(.dark) .day:not(.day-disabled) {
