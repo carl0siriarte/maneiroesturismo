@@ -26,11 +26,12 @@ ARG SECRET_TOKEN
 ENV SECRET_TOKEN=${SECRET_TOKEN}
 
 RUN apk update && apk add git
-RUN npm i -g pnpm
 
 WORKDIR /app
 
 COPY . .
+
+RUN npm i -g pnpm
 
 RUN pnpm install
 RUN pnpx turbo run build --scope=api
