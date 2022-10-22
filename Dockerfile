@@ -34,7 +34,7 @@ COPY . .
 RUN npm i -g pnpm
 
 RUN pnpm install
-RUN pnpx turbo run build --scope=api
+RUN pnpm run build:api
 
 FROM node:alpine AS runner
 
