@@ -183,7 +183,7 @@
 
 <div class="flex flex-col w-full">
   <div
-    class="border-b flex space-x-2 border-gray-300 text-lg w-full py-6 items-center justify-center"
+    class="border-b flex space-x-2 border-gray-300 text-lg w-full py-6 items-center justify-center dark:border-dark-100"
   >
     <button class="flex" on:click={() => year--}> &Lt; </button>
     <button class="flex" on:click={prev}> &lt; </button>
