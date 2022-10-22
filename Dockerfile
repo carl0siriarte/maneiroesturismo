@@ -25,9 +25,9 @@ ENV REDIS_URL=${REDIS_URL}
 ARG SECRET_TOKEN
 ENV SECRET_TOKEN=${SECRET_TOKEN}
 
-RUN apk update && apk add git
 WORKDIR /app
-RUN npm i -g turbo pnpm
+RUN apk update && apk add git
+RUN npm i -g pnpm
 # COPY --from=builder /app/out/json/ .
 # COPY --from=builder /app/out/yarn.lock ./yarn.lock
 # COPY --from=builder /app/out/full/ .
