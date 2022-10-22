@@ -25,14 +25,12 @@ ENV REDIS_URL=${REDIS_URL}
 ARG SECRET_TOKEN
 ENV SECRET_TOKEN=${SECRET_TOKEN}
 
-WORKDIR /app
 RUN apk update && apk add git
 RUN npm i -g pnpm
-# COPY --from=builder /app/out/json/ .
-# COPY --from=builder /app/out/yarn.lock ./yarn.lock
-# COPY --from=builder /app/out/full/ .
+
+WORKDIR /app
+
 COPY . .
-# COPY turbo.json turbo.json
 
 RUN pnpm install
 RUN pnpx turbo run build --scope=api
