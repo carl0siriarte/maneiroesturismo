@@ -58,7 +58,7 @@
     overflow: auto;
   }
   .day {
-    @apply border-b border-r bg-gray-50 border-gray-300;
+    @apply border-b border-r bg-gray-50 border-gray-300 text-sm;
     text-align: right;
     padding: 14px 20px;
     letter-spacing: 1px;

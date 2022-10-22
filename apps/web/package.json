@@ -14,8 +14,8 @@
   },
   "devDependencies": {
     "@poppanator/sveltekit-svg": "^0.2.3",
-    "@sveltejs/adapter-vercel": "1.0.0-next.77",
-    "@sveltejs/kit": "1.0.0-next.480",
+    "@sveltejs/adapter-vercel": "1.0.0-next.80",
+    "@sveltejs/kit": "1.0.0-next.522",
     "@windicss/plugin-animations": "^1.0.9",
     "@windicss/plugin-icons": "^1.0.2",
     "carbon-preprocess-svelte": "^0.6.0",

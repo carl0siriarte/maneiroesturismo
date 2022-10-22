@@ -9,7 +9,7 @@ declare namespace App {
     session: import('svelte-kit-cookie-session').Session<SessionData>
     cookies: Record<string, string>
   }
-  interface PageError {
+  interface Error {
     name?: string
     message?: string
     stack?: string
