@@ -1,13 +1,8 @@
 <script lang="ts">
-  import {
-    ArrowRight24,
-    ChevronLeft24,
-    ChevronMini32,
-    ChevronRight24,
-    NextFilled24,
-    ViewNext24,
-    ViewOff24,
-  } from 'carbon-icons-svelte'
+  import { browser } from '$app/environment'
+  import { pageContext } from '$lib/stores'
+  import { trpc } from '$lib/trpc/client'
+  import type { RouterTypes } from '@pkg/trpc'
   import CalendarDays from './CalendarDays.svelte'
 
   const dayNames = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
@@ -27,14 +22,24 @@
   ]
   let headers: string[] = []
   let now = new Date()
-  let year = now.getFullYear() //	this is the month & year displayed
-  let month = now.getMonth()
+  export let year = now.getFullYear() //	this is the month & year displayed
+  export let month = now.getMonth()
 
-  type Day = { name: string; enabled: boolean; date: Date }
+  type Day = { name: string; enabled: boolean; date: Date; events: number }
   let days: Day[] = []
 
-  function randInt(max: number) {
-    return Math.floor(Math.random() * max) + 1
+  async function setEvents() {
+    if (!browser) return
+    const events = await trpc.events.list.query({
+      year,
+      placeId: $pageContext.context.place?.id || '',
+      month: month + 1,
+    })
+    days = days.map((day) => ({
+      ...day,
+      events: events?.filter((e) => e.date.getDate() == day.date.getDate())
+        .length,
+    }))
   }
 
   $: month, year, initContent()
@@ -52,66 +57,67 @@
   }
   let items: Event[] = []
 
-  function initMonthItems() {
-    let y = year
-    let m = month
-    let d1 = new Date(y, m, randInt(7) + 7)
-    items = [
-      {
-        title: '11:00 Task Early in month',
-        className: 'task--primary',
-        date: new Date(y, m, randInt(6)),
-        len: randInt(4) + 1,
-      },
-      {
-        title: '7:30 Wk 2 tasks',
-        className: 'task--warning',
-        date: d1,
-        len: randInt(4) + 2,
-      },
-      {
-        title: 'Overlapping Stuff (isBottom:true)',
-        date: d1,
-        className: 'task--info',
-        len: 4,
-        isBottom: true,
-      },
-      {
-        title: '10:00 More Stuff to do',
-        date: new Date(y, m, randInt(7) + 14),
-        className: 'task--info',
-        len: randInt(4) + 9,
-        detailHeader: 'Difficult',
-        detailContent: 'But not especially so',
-      },
-      {
-        title: 'All day task',
-        date: new Date(y, m, randInt(7) + 21),
-        className: 'task--danger',
-        len: 1,
-      },
-    ]
+  // function initMonthItems() {
+  //   let y = year
+  //   let m = month
+  //   let d1 = new Date(y, m, randInt(7) + 7)
+  //   items = [
+  //     {
+  //       title: '11:00 Task Early in month',
+  //       className: 'task--primary',
+  //       date: new Date(y, m, randInt(6)),
+  //       len: randInt(4) + 1,
+  //     },
+  //     {
+  //       title: '7:30 Wk 2 tasks',
+  //       className: 'task--warning',
+  //       date: d1,
+  //       len: randInt(4) + 2,
+  //     },
+  //     {
+  //       title: 'Overlapping Stuff (isBottom:true)',
+  //       date: d1,
+  //       className: 'task--info',
+  //       len: 4,
+  //       isBottom: true,
+  //     },
+  //     {
+  //       title: '10:00 More Stuff to do',
+  //       date: new Date(y, m, randInt(7) + 14),
+  //       className: 'task--info',
+  //       len: randInt(4) + 9,
+  //       detailHeader: 'Difficult',
+  //       detailContent: 'But not especially so',
+  //     },
+  //     {
+  //       title: 'All day task',
+  //       date: new Date(y, m, randInt(7) + 21),
+  //       className: 'task--danger',
+  //       len: 1,
+  //     },
+  //   ]
 
-    //This is where you calc the row/col to put each dated item
-    for (let i of items) {
-      let rc = findRowCol(i.date)
-      if (rc == null) {
-        console.log('didn`t find date for ', i)
-        console.log(i.date)
-        console.log(days)
-        i.startCol = i.startRow = 0
-      } else {
-        i.startCol = rc.col
-        i.startRow = rc.row
-      }
-    }
-  }
+  //   //This is where you calc the row/col to put each dated item
+  //   for (let i of items) {
+  //     let rc = findRowCol(i.date)
+  //     if (rc == null) {
+  //       console.log('didn`t find date for ', i)
+  //       console.log(i.date)
+  //       console.log(days)
+  //       i.startCol = i.startRow = 0
+  //     } else {
+  //       i.startCol = rc.col
+  //       i.startRow = rc.row
+  //     }
+  //   }
+  // }
 
   // choose what date/day gets displayed in each date box.
   function initContent() {
     headers = dayNames
     initMonth()
-    initMonthItems()
+    setEvents()
+    // initMonthItems()
   }
 
   function initMonth() {
@@ -128,14 +134,19 @@
     //	show the days before the start of this month (disabled) - always less than 7
     for (let i = daysInLastMonth - firstDay; i < daysInLastMonth; i++) {
       let d = new Date(prevMonth == 11 ? year - 1 : year, prevMonth, i + 1)
-      days.push({ name: '' + (i + 1), enabled: false, date: d })
+      days.push({ name: '' + (i + 1), enabled: false, date: d, events: 0 })
     }
     //	show the days in this month (enabled) - always 28 - 31
     for (let i = 0; i < daysInThisMonth; i++) {
       let d = new Date(year, month, i + 1)
       if (i == 0)
-        days.push({ name: monthAbbrev + ' ' + (i + 1), enabled: true, date: d })
-      else days.push({ name: '' + (i + 1), enabled: true, date: d })
+        days.push({
+          name: monthAbbrev + ' ' + (i + 1),
+          enabled: true,
+          date: d,
+          events: 0,
+        })
+      else days.push({ name: '' + (i + 1), enabled: true, date: d, events: 0 })
       //console.log('i='+i+'  dt is '+d+' date() is '+d.getDate());
     }
     //	show any days to fill up the last row (disabled) - always less than 7
@@ -146,23 +157,24 @@
           name: nextMonthAbbrev + ' ' + (i + 1),
           enabled: false,
           date: d,
+          events: 0,
         })
-      else days.push({ name: '' + (i + 1), enabled: false, date: d })
+      else days.push({ name: '' + (i + 1), enabled: false, date: d, events: 0 })
     }
   }
 
-  function findRowCol(dt: Date) {
-    for (let i = 0; i < days.length; i++) {
-      let d = days[i].date
-      if (
-        d.getFullYear() === dt.getFullYear() &&
-        d.getMonth() === dt.getMonth() &&
-        d.getDate() === dt.getDate()
-      )
-        return { row: Math.floor(i / 7) + 2, col: (i % 7) + 1 }
-    }
-    return null
-  }
+  // function findRowCol(dt: Date) {
+  //   for (let i = 0; i < days.length; i++) {
+  //     let d = days[i].date
+  //     if (
+  //       d.getFullYear() === dt.getFullYear() &&
+  //       d.getMonth() === dt.getMonth() &&
+  //       d.getDate() === dt.getDate()
+  //     )
+  //       return { row: Math.floor(i / 7) + 2, col: (i % 7) + 1 }
+  //   }
+  //   return null
+  // }
 
   function next() {
     month++
@@ -194,5 +206,5 @@
     <button class="flex" on:click={next}> &gt; </button>
     <button class="flex" on:click={() => year++}> &Gt; </button>
   </div>
-  <CalendarDays {headers} {days} {items} />
+  <CalendarDays {headers} {days} on:dayClick on:headerClick />
 </div>

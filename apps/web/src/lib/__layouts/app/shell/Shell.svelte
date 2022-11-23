@@ -11,7 +11,7 @@
   style:--header-height="{headerHeight}px"
 >
   <Header bind:headerHeight />
-  {#key $page.routeId}
+  {#key $page.route.id}
     <div
       class="flex-grow flex flex-col h-full"
       in:fade|local={{ duration: 200 }}

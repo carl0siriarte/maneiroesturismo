@@ -2,7 +2,7 @@
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["generate", "^build"],
       "outputs": [
         "dist/**",
         "build/**",
@@ -21,7 +21,12 @@
       "dependsOn": ["^db:push"]
     },
     "generate": {
-      "dependsOn": ["^generate"]
+      "dependsOn": ["^generate"],
+      "inputs": ["*.prisma"],
+      "outputs": [
+        "./node_modules/.prisma/**",
+        "./node_modules/@prisma/client/**"
+      ]
     },
     "lint": {
       "outputs": []

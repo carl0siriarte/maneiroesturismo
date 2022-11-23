@@ -1,5 +1,6 @@
 export enum NodeType {
   text = 'text',
+  image = 'image',
 }
 
 export interface TextNode {
@@ -9,10 +10,19 @@ export interface TextNode {
   content: string
 }
 
-export type Node = TextNode
+export interface ImageNode {
+  id: string
+  type: NodeType.image
+  url: string
+  path: string
+}
 
-export type BlocksNodes = {
-  nodes: Node[]
+export type Node = {
+  type: NodeType
+}
+
+export type BlocksNodes<T extends Node> = {
+  nodes: T[]
 }
 
 export { default as BlockEditor } from './BlockEditor.svelte'

@@ -9,10 +9,25 @@ export type CreatePostInput = TrimProps<
 export async function createPost(
   input: CreatePostInput,
   prisma = $prisma
-): Promise<Post> {
+): Promise<
+  Post & {
+    _count: {
+      CommentOnPost: number
+      likes: number
+    }
+  }
+> {
   return await prisma.post.create({
     data: {
       ...input,
+    },
+    include: {
+      _count: {
+        select: {
+          CommentOnPost: true,
+          likes: true,
+        },
+      },
     },
   })
 }
@@ -51,10 +66,26 @@ export async function deletePost(
 export async function getPost(
   postId: string,
   prisma = $prisma
-): Promise<Post | null> {
+): Promise<
+  | (Post & {
+      _count: {
+        CommentOnPost: number
+        likes: number
+      }
+    })
+  | null
+> {
   return await prisma.post.findUnique({
     where: {
       id: postId,
+    },
+    include: {
+      _count: {
+        select: {
+          CommentOnPost: true,
+          likes: true,
+        },
+      },
     },
   })
 }
@@ -70,7 +101,16 @@ export type ListPostsInput = {
 export async function listPosts(
   { page, placeId, pageSize, ids, filter }: ListPostsInput,
   prisma = $prisma
-): Promise<Page<Post>> {
+): Promise<
+  Page<
+    Post & {
+      _count: {
+        CommentOnPost: number
+        likes: number
+      }
+    }
+  >
+> {
   let AND: Prisma.PostWhereInput[] = []
   if (ids)
     AND = [
@@ -104,6 +144,14 @@ export async function listPosts(
       where,
       take: pageSize,
       skip: pageSize * Math.max(page - 1, 0),
+      include: {
+        _count: {
+          select: {
+            CommentOnPost: true,
+            likes: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },

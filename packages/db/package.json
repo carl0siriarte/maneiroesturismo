@@ -15,7 +15,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "prisma generate && tsup --clean",
+    "build": "tsup --clean",
     "dev": "tsup --watch --clean=false --silent",
     "declarations": "tsc --emitDeclarationOnly --declaration",
     "format": "prisma format",

@@ -1,7 +1,10 @@
 import { prisma as $prisma, Prisma } from 'src/prisma.js'
 import type { Comment, Page, TrimProps } from 'src/types.js'
 
-export type CreateCommentInput = TrimProps<Comment, 'id' | 'createdAt'> &
+export type CreateCommentInput = TrimProps<
+  Comment,
+  'id' | 'createdAt' | 'author'
+> &
   Record<'postId', string>
 
 export async function createComment(
@@ -9,6 +12,9 @@ export async function createComment(
   prisma = $prisma
 ): Promise<Comment> {
   return await prisma.comment.create({
+    include: {
+      author: true,
+    },
     data: {
       ...input,
       CommentOnPost: {
@@ -30,7 +36,15 @@ export type ListCommentsInput = {
 export async function listComments(
   { page, pageSize, origin, originId }: ListCommentsInput,
   prisma = $prisma
-): Promise<Page<Comment>> {
+): Promise<
+  Page<
+    Comment & {
+      _count: {
+        replies: number
+      }
+    }
+  >
+> {
   const where: Prisma.CommentWhereInput = {
     CommentOnPost:
       origin == 'post'
@@ -38,7 +52,7 @@ export async function listComments(
             some: { postId: originId },
           }
         : undefined,
-    replyToId: origin == 'comment' ? originId : undefined,
+    replyToId: origin == 'comment' ? originId : null,
   }
   const [count, items] = await prisma.$transaction([
     prisma.comment.count({ where }),
@@ -46,6 +60,14 @@ export async function listComments(
       where,
       take: pageSize,
       skip: pageSize * Math.max(page - 1, 0),
+      include: {
+        author: true,
+        _count: {
+          select: {
+            replies: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },

@@ -5,8 +5,7 @@
   import { trpc } from '$lib/trpc/client'
   import type { Post } from '@pkg/db'
   import { Document16, Image24 } from 'carbon-icons-svelte'
-  import { createEventDispatcher } from 'svelte'
-  import { slide } from 'svelte/transition'
+  import { createEventDispatcher, tick } from 'svelte'
 
   let value = ''
   let count = 0
@@ -25,6 +24,10 @@
         placeId: $pageContext.context.place?.id || '',
       })
       dispatch('create', post)
+      value = ''
+      await tick()
+      instanceEditor?.()
+      await tick()
     } finally {
       publishing = false
     }
@@ -33,7 +36,7 @@
   const countLimit = 500
 
   $: valid = count && count <= countLimit
-  let show = false
+  let instanceEditor: (() => void) | undefined
 </script>
 
 <div class="flex flex-col space-y-2">
@@ -45,7 +48,7 @@
     <div
       class="bg-white border rounded border-gray-300 text-sm text-block max-h-[20vh] p-2 rouded overflow-auto dark:bg-dark-400 dark:border-dark-100"
     >
-      <Editor bind:value bind:count />
+      <Editor bind:value bind:count bind:instanceEditor />
     </div>
     <div class="flex w-full justify-between items-center">
       <div

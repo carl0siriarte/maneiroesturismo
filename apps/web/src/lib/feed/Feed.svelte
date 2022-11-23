@@ -16,11 +16,12 @@
     Map24,
     Search16,
   } from 'carbon-icons-svelte'
-  import { createEventDispatcher, setContext } from 'svelte'
+  import { createEventDispatcher, onMount, setContext } from 'svelte'
   import { portal } from 'svelte-portal'
   import { backOut, expoOut } from 'svelte/easing'
   import { fade, fly, scale, slide } from 'svelte/transition'
   import Calendar from './Calendar.svelte'
+  import Events from './Events.svelte'
   import Information from './Information.svelte'
   import { feedPages } from './pages'
   import PostCard from './PostCard.svelte'
@@ -56,6 +57,7 @@
   )
 
   let search = ''
+  let searchTerm = ''
 
   let scrollY = 0
   let coverHeight = 0
@@ -67,6 +69,11 @@
   type Events = {
     closePostModal: void
   }
+
+  let mounted = false
+  onMount(() => {
+    mounted = true
+  })
 
   const dispatcher = createEventDispatcher<Events>()
 </script>
@@ -101,7 +108,7 @@
       on:click={() => dispatcher('closePostModal')}
     />
     <div
-      class="flex flex-col h-full space-y-2 min-w-5/10 w-full max-w-9/10 relative items-center justify-center pointer-events-none lg:max-w-8/10 "
+      class="flex flex-col h-full space-y-2 min-w-5/10 w-full max-w-9/10 max-h-[90vh] relative items-center justify-center pointer-events-none lg:max-w-9/10"
       in:fly|local={{ y: 20, duration: 400, easing: backOut }}
       out:scale|local={{ start: 0.2, duration: 200, easing: expoOut }}
     >
@@ -120,10 +127,12 @@
     class="flex flex-col top-[calc(var(--header-height))] w-full pb-0 z-20"
     class:fixed={scrollY >= coverHeight && browser}
   >
-    <div
-      class="flex bg-gray-100 h-[calc(100%)] w-full absolute backdrop-blur-md backdrop-filter  !bg-opacity-75 dark:bg-dark-800"
-      class:hidden={scrollY < coverHeight}
-    />
+    {#if mounted}
+      <div
+        class="flex bg-gray-100 h-[calc(100%)] w-full absolute backdrop-blur-md backdrop-filter  !bg-opacity-75 dark:bg-dark-800"
+        class:hidden={scrollY < coverHeight}
+      />
+    {/if}
     <div class="min-h-38px px-4 pt-4 relative lg:px-[20%]">
       <div
         class="flex w-full pb-4 relative items-start justify-end"
@@ -163,7 +172,9 @@
               class:border-current={active}
               href="{spa ? '?feed=' : '/'}{link.id}"
             >
-              <svelte:component this={getFeedPageIcon(link.id)} />
+              {#if getFeedPageIcon(link.id)}
+                <svelte:component this={getFeedPageIcon(link.id)} />
+              {/if}
               <span class="flex font-bold text-xs">{link.title}</span>
             </a>
           {/each}
@@ -187,7 +198,12 @@
             </div>
           {/if}
           {#if feedPage != 'information'}
-            <div class="w-full relative">
+            <form
+              class="w-full relative"
+              on:submit|preventDefault={() => {
+                searchTerm = search
+              }}
+            >
               <div
                 class="flex space-x-2 w-full px-3 inset-0 absolute pointer-events-none items-center justify-end"
               >
@@ -198,12 +214,16 @@
                     title="Limpiar búsqueda"
                     transition:fly={{ y: 2, duration: 200 }}
                     use:tooltip
+                    on:click={() => {
+                      searchTerm = ''
+                      search = ''
+                    }}
                   >
                     <Close16 />
                   </button>
                 {/if}
                 <button
-                  type="button"
+                  type="submit"
                   class="pointer-events-auto"
                   title="Realizar búsqueda"
                   class:opacity-50={!search}
@@ -215,13 +235,12 @@
               <input
                 class="bg-white border rounded border-gray-300 text-xs leading-tight w-full py-2 px-3 pr-[calc(24px+24px+16px)] appearance-none dark:bg-dark-700 dark:border-dark-400 focus:outline-none focus:shadow-outline disabled:bg-gray-200 disabled:text-gray-500 disabled:dark:bg-dark-900"
                 type="text"
-                pattern="(https?|http?|/).*?"
                 autocomplete="nooooope"
                 aria-autocomplete="none"
                 placeholder="Buscar..."
                 bind:value={search}
               />
-            </div>
+            </form>
           {/if}
         </div>
         {#if editable && feedPage == ''}
@@ -253,17 +272,23 @@
     <div
       class="flex flex-col w-full px-4 pb-4 lg:px-[20%]"
       in:fade={{ duration: 600, easing: expoOut }}
-      class:pt-152px={scrollY >= coverHeight}
-      class:!lg:pt-104px={scrollY >= coverHeight}
-      class:!pt-282px={scrollY >= coverHeight && editable && feedPage == ''}
-      class:!lg:pt-234px={scrollY >= coverHeight && editable && feedPage == ''}
+      class:pt-152px={scrollY >= coverHeight && mounted}
+      class:!lg:pt-104px={scrollY >= coverHeight && mounted}
+      class:!pt-282px={scrollY >= coverHeight &&
+        editable &&
+        feedPage == '' &&
+        mounted}
+      class:!lg:pt-234px={scrollY >= coverHeight &&
+        editable &&
+        feedPage == '' &&
+        mounted}
     >
       {#if feedPage == 'information'}
         <Information {editable} />
       {:else if feedPage == 'events'}
-        <Calendar />
+        <Events />
       {:else}
-        <Posts {editable} bind:pushPost />
+        <Posts bind:pushPost bind:filter={searchTerm} />
       {/if}
     </div>
   {/key}

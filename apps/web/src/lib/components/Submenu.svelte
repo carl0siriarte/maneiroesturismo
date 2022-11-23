@@ -11,7 +11,7 @@
 <div class="wrapper relative {y}">
   <slot name="button">
     <button
-      class="border-transparent rounded flex space-x-1 border-2 p-1 duration-200 items-center hover:border-gray-300 dark:hover:border-gray-500"
+      class="border-transparent rounded flex space-x-1 border-2 p-1 duration-200 items-center overflow-auto hover:border-gray-300 dark:hover:border-gray-500"
       type="button"
     >
       <div class="text-xs">{title}</div>

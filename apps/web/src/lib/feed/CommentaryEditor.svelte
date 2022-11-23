@@ -5,12 +5,13 @@
 
   let value = ''
   export let postId: string
+  export let replyToId: string | undefined = undefined
   $: count = value.length
   let publishing = false
 
   const dispatch = createEventDispatcher<{ create: Comment }>()
 
-  async function publish(replyToId?: string) {
+  async function publish() {
     if (!valid || publishing) return
     publishing = true
     try {

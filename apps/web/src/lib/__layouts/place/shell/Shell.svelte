@@ -1,4 +1,5 @@
 <script>
+  import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import Feed from '$lib/feed/Feed.svelte'
   import Logo from '$lib/Logo.svelte'
@@ -21,10 +22,15 @@
       class="flex-grow flex flex-col h-full"
       in:fade|local={{ duration: 200 }}
     >
-      <Feed />
+      <Feed
+        post={$page.data.post || null}
+        on:closePostModal={() => {
+          goto('/', { noScroll: true })
+        }}
+      />
     </div>
   {:else}
-    {#key $page.routeId}
+    {#key $page.route.id}
       <div
         class="flex-grow flex flex-col h-full"
         in:fade|local={{ duration: 200 }}

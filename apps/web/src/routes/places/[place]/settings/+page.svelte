@@ -5,7 +5,7 @@
   import { elasticOut, expoOut } from 'svelte/easing'
   import { scale, slide } from 'svelte/transition'
   import { trpc } from '$lib/trpc/client'
-  import { goto } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import type { RouterTypes } from '@pkg/trpc'
 
   export let data: PageData
@@ -22,11 +22,12 @@
     try {
       // const created = await trpc.places.create.mutate(place)
       const updated = await trpc.places.update.mutate(place)
-      goto(`/places/${updated.slug}/settings`, {
+      await goto(`/places/${updated.slug}/settings`, {
         replaceState: true,
         noscroll: true,
         keepfocus: true,
       })
+      invalidateAll()
     } catch (err) {
       console.log(err)
       error = err

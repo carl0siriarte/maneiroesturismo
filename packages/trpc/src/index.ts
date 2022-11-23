@@ -13,12 +13,14 @@ import users from './handlers/users.js'
 import places from './handlers/places.js'
 import posts from './handlers/posts.js'
 import comments from './handlers/comments.js'
+import events from './handlers/events.js'
 
 export const router = t.router({
   users,
   places,
   posts,
   comments,
+  events,
 })
 
 export type tRPCRouter = typeof router

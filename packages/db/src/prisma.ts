@@ -1,18 +1,19 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from '@prisma/client'
 
 export function createPrismaClient(url?: string): PrismaClient {
+  console.log('Instancing Prisma client...')
   return new PrismaClient({
-    errorFormat: "pretty",
+    errorFormat: 'pretty',
     rejectOnNotFound: false,
     datasources: { db: { url: url || process.env.DATABASE_URL } },
-  });
+  })
 }
 
-let prisma = createPrismaClient();
+let prisma = createPrismaClient()
 
 export async function setPrismaDatabaseURL(url: string) {
-  await prisma.$disconnect();
-  prisma = createPrismaClient(url);
+  await prisma.$disconnect()
+  prisma = createPrismaClient(url)
 }
 
-export { Prisma, prisma, PrismaClient };
+export { Prisma, prisma, PrismaClient }

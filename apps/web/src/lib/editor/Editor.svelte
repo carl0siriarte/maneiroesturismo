@@ -10,7 +10,7 @@
 
   export let value: string | null | undefined
   export let count: number = 0
-  let isEmpty = !value?.trim()
+  $: isEmpty = editor ? editor.isEmpty : !value?.trim()
 
   let selectedIndex = 0
   $: selectedIndex = $slashVisible ? selectedIndex : 0
@@ -45,15 +45,16 @@
   function selectItem(index) {
     const item = $slashItems[index]
 
-    if (item) {
+    if (item && editor) {
       let range = $slashProps.range
       item.command({ editor, range })
     }
   }
 
-  let element, editor: Editor, w
+  let element: HTMLDivElement, editor: Editor | undefined, w
 
-  onMount(() => {
+  export function instanceEditor() {
+    editor?.destroy()
     editor = new Editor({
       element: element,
       editorProps: {
@@ -83,12 +84,13 @@
             count,
           },
         })
-        isEmpty = editor.isEmpty
         value = isEmpty ? '' : value
       },
     })
     count = editor.state.doc.content.size - 2
-  })
+  }
+
+  onMount(instanceEditor)
 
   onDestroy(() => {
     if (editor) {

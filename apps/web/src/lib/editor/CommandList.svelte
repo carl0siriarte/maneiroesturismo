@@ -10,12 +10,13 @@
 
   let height = 0
   let width = 0
+  let scrollY = 0
   let wrapperHeight = 0
   let wrapperWidth = 0
 
   let elements = []
 
-  $: invert = ($slashLocation.y || 0) + wrapperHeight > height || 0
+  $: invert = $slashLocation.y - scrollY + wrapperHeight > (height || 0)
 
   $: left = clamp({
     min: 0,
@@ -24,7 +25,7 @@
   })
 </script>
 
-<svelte:window bind:innerHeight={height} bind:innerWidth={width} />
+<svelte:window bind:innerHeight={height} bind:innerWidth={width} bind:scrollY />
 
 {#if $slashVisible}
   <div
@@ -43,7 +44,8 @@
       : $slashLocation.y + $slashLocation.height}px;"
   >
     <!-- <div class="font-bold text-sm p-2 top-0 left-0 text-slate-500 uppercase">
-      Bloques
+      {$slashLocation.y - scrollY}
+      {height}
     </div> -->
     {#if $slashItems.length}
       {#each $slashItems as { title, subtitle, command, icon }, i (title)}

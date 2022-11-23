@@ -91,14 +91,98 @@ const listPostsInput = z.object({
 const listPosts = procedure
   .input(listPostsInput)
   .query(async ({ input, ctx }) => {
-    return await db.listPosts(input, ctx.prisma)
+    const data = await db.listPosts(input, ctx.prisma)
+    const likes: Record<string, boolean> = (
+      await ctx.prisma.$transaction(
+        data.items.map((p) =>
+          ctx.prisma.postLike.findUnique({
+            where: {
+              authorId_postId: {
+                authorId: ctx.userId || '',
+                postId: p.id,
+              },
+            },
+          })
+        )
+      )
+    )
+      .filter((l) => l !== null)
+      .reduce((a, b) => ({ ...a, [b!.postId]: true }), {})
+    return {
+      ...data,
+      items: data.items.map((p) => ({ ...p, liked: likes[p.id] ?? false })),
+    }
   })
 
 const getPostInput = z.string()
 
 const getPost = procedure.input(getPostInput).query(async ({ input, ctx }) => {
-  return await db.getPost(input, ctx.prisma)
+  const post = await db.getPost(input, ctx.prisma)
+  if (!post) return null
+  const liked = ctx.userId
+    ? await ctx.prisma.postLike.findUnique({
+        where: {
+          authorId_postId: {
+            authorId: ctx.userId,
+            postId: post.id || '',
+          },
+        },
+      })
+    : false
+  return {
+    ...post,
+    liked: !!liked,
+  }
 })
+
+const likePostInput = z.string()
+
+const likePost = authProcedure
+  .input(likePostInput)
+  .mutation(async ({ input, ctx }) => {
+    const like = await ctx.prisma.postLike.findUnique({
+      where: {
+        authorId_postId: {
+          authorId: ctx.userId || '',
+          postId: input,
+        },
+      },
+    })
+    if (like) {
+      await ctx.prisma.postLike.delete({
+        where: {
+          authorId_postId: {
+            authorId: ctx.userId || '',
+            postId: input,
+          },
+        },
+      })
+    } else {
+      await ctx.prisma.postLike.create({
+        data: {
+          postId: input,
+          authorId: ctx.userId || '',
+        },
+      })
+    }
+    return !like
+  })
+
+const checkLikeInput = z.string()
+
+const checkLike = authProcedure
+  .input(checkLikeInput)
+  .query(async ({ input, ctx }) => {
+    const like = await ctx.prisma.postLike.findUnique({
+      where: {
+        authorId_postId: {
+          authorId: ctx.userId || '',
+          postId: input,
+        },
+      },
+    })
+    return !!like
+  })
 
 export default t.router({
   create: createPost,
@@ -106,4 +190,6 @@ export default t.router({
   delete: deletePost,
   list: listPosts,
   get: getPost,
+  likePost,
+  checkLike,
 })

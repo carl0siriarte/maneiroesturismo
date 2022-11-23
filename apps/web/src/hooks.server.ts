@@ -5,7 +5,6 @@ import { getLayoutType } from '$lib/utils/layout'
 import { sequence } from '@sveltejs/kit/hooks'
 import { createTRPCProxy } from '$lib/trpc/proxy.server'
 import type { tRPCRouter } from '@pkg/trpc'
-import { getDefaultHost } from '$lib/utils/host'
 
 const privateQueries = ['users.whoami', 'tourists.whoami']
 

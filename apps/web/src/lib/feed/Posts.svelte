@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment'
   import { tooltip } from '$lib/components/tooltip'
   import { pageContext } from '$lib/stores'
   import { trpc } from '$lib/trpc/client'
@@ -9,9 +10,7 @@
   import { expoOut } from 'svelte/easing'
   import { fly } from 'svelte/transition'
   import PostCard from './PostCard.svelte'
-  import PostEditor from './PostEditor.svelte'
 
-  export let editable = false
   export let page = 2
 
   export let data: RouterTypes['posts']['list']['output'] | undefined =
@@ -19,8 +18,20 @@
   let fetching = false
 
   export let pageSize = 10
+  export let filter = ''
 
   let waitTimeout: NodeJS.Timeout
+
+  $: search(filter)
+
+  function search(filter: string) {
+    if (!browser) return
+    if (data) {
+      page = 0
+      data = undefined
+      fetchData()
+    }
+  }
 
   async function fetchData() {
     waitTimeout = setTimeout(() => {
@@ -31,6 +42,7 @@
     const newData = await trpc.posts.list.query({
       placeId: $pageContext.context.place?.id || '',
       pageSize,
+      filter,
       page,
     })
     const merged = [...(data?.items || []), ...newData.items]
@@ -46,7 +58,17 @@
   export function pushPost(post: Post) {
     data = {
       count: (data?.count || 0) + 1,
-      items: [post, ...(data?.items || [])],
+      items: [
+        {
+          ...post,
+          _count: {
+            CommentOnPost: 0,
+            likes: 0,
+          },
+          liked: false,
+        },
+        ...(data?.items || []),
+      ],
     }
   }
 

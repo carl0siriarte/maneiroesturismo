@@ -1,13 +1,18 @@
-<script>
-  import { createEventDispatcher, onMount } from 'svelte'
+<script lang="ts">
+  import { createEventDispatcher } from 'svelte'
 
-  export var headers = []
-  export let days = []
-  export let items = []
+  type Day = { name: string; date: Date; enabled: boolean; events: number }
+
+  export var headers: string[] = []
+  export let days: Day[] = []
+  // export let items = []
 
   let now = new Date()
 
-  let dispatch = createEventDispatcher()
+  let dispatch = createEventDispatcher<{ dayClick: Day; headerClick: string }>()
+
+  $: format = (date: Date): string =>
+    `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 </script>
 
 <div class="calendar">
@@ -18,17 +23,32 @@
   {/each}
 
   {#each days as day}
+    {@const equal = format(day.date) == format(now)}
     {#if day.enabled}
-      <span class="day" on:click={() => dispatch('dayClick', day)}
-        >{day.name}</span
-      >
+      <span
+        class="day relative {equal
+          ? '!text-white !hover:bg-light-900'
+          : '!hover:bg-light-700 !hover:dark:bg-dark-700'}"
+        class:!bg-blue-600={equal}
+        class:!hover:bg-blue-600={equal}
+        class:!hover:bg-opacity-50={equal}
+        on:click={() => dispatch('dayClick', day)}
+        >{day.name}
+        {#if day.events}
+          <div
+            class="rounded-full flex bg-dark-100 h-28px text-white right-2 bottom-2 w-28px items-center justify-center absolute !text-xs"
+          >
+            {day.events}
+          </div>
+        {/if}
+      </span>
     {:else}
       <span class="day day-disabled" on:click={() => dispatch('dayClick', day)}
         >{day.name}</span
       >
     {/if}
   {/each}
-
+  <!-- 
   {#each items as item}
     <section
       on:click={() => dispatch('itemClick', item)}
@@ -45,32 +65,38 @@
         </div>
       {/if}
     </section>
-  {/each}
+  {/each} -->
 </div>
 
 <style>
   .calendar {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(7, minmax(72px, 1fr));
-    grid-template-rows: 50px;
-    grid-auto-rows: 120px;
+    grid-template-columns: repeat(7, minmax(0px, 1fr));
+    /* grid-template-rows: 50px; */
+    /* grid-auto-rows: 120px; */
     overflow: auto;
   }
   .day {
-    @apply border-b border-r bg-gray-50 border-gray-300 text-sm;
+    @apply border-b border-r bg-gray-100 border-gray-300 p-2;
+    font-size: 0.4rem;
     text-align: right;
-    padding: 14px 20px;
     letter-spacing: 1px;
-    font-size: 14px;
     box-sizing: border-box;
     @apply font-bold text-gray-500;
     position: relative;
     z-index: 1;
+    aspect-ratio: 1/1;
+  }
+
+  @screen lg {
+    .day {
+      @apply text-sm;
+    }
   }
 
   :global(.dark) .day {
-    @apply bg-dark-900 border-dark-100;
+    @apply bg-dark-800 border-dark-100;
   }
 
   :global(.dark) .day:not(.day-disabled) {
@@ -121,17 +147,24 @@
   }
   .day-name {
     @apply font-bold text-pink-700;
-    font-size: 12px;
+    font-size: 0.4rem;
     text-transform: uppercase;
     text-align: center;
     border-bottom: 1px solid rgba(166, 168, 179, 0.12);
-    line-height: 50px;
-  }
-  .day-disabled {
-    @apply bg-transparent text-opacity-50;
-    cursor: not-allowed;
+    line-height: 40px !important;
   }
 
+  @screen lg {
+    .day-name {
+      @apply text-xs;
+    }
+  }
+
+  .day-disabled {
+    @apply bg-gray-200 text-opacity-50;
+    cursor: not-allowed;
+  }
+  /* 
   .task {
     border-left-width: 3px;
     padding: 8px 12px;
@@ -215,5 +248,5 @@
     margin-bottom: 0;
     font-weight: 500;
     color: rgba(81, 86, 93, 0.7);
-  }
+  } */
 </style>

@@ -1,24 +1,30 @@
 <script lang="ts">
+  import Image from '$lib/components/caravaggio/Image.svelte'
+  import { useCaravaggioBuilder } from '$lib/components/caravaggio/useCaravaggio'
   import Submenu from '$lib/components/Submenu.svelte'
   import { tooltip } from '$lib/components/tooltip'
   import Editor from '$lib/editor/Editor.svelte'
+  import { supabase } from '@pkg/shared'
   import {
     Add16,
     ChevronDown16,
     ChevronUp16,
     Document16,
+    Image16,
+    Image32,
     TrashCan16,
   } from 'carbon-icons-svelte'
   import { onMount, type SvelteComponent } from 'svelte'
+  import { portal } from 'svelte-portal'
   import { flip } from 'svelte/animate'
   import { expoOut } from 'svelte/easing'
   import type { Writable } from 'svelte/store'
   import { fly, slide } from 'svelte/transition'
   import { NodeType, type BlocksNodes, type Node } from '.'
 
-  type Element = {
+  type Element<T extends Node = any> = {
     icon: new (args: { target: any; props?: any }) => SvelteComponent
-    node: Omit<Node, 'id'>
+    node: Omit<T, 'id'>
     title: string
   }
 
@@ -31,9 +37,18 @@
         content: '',
       },
     },
+    {
+      icon: Image16,
+      title: 'Imagen',
+      node: {
+        type: NodeType.image,
+        url: '',
+        path: '',
+      },
+    },
   ]
 
-  export let root: Writable<BlocksNodes>
+  export let root: Writable<BlocksNodes<any>>
 
   onMount(() => {
     root.update((root) => {
@@ -71,6 +86,35 @@
   function randomUUID() {
     return crypto.randomUUID()
   }
+
+  const urlBuilder = useCaravaggioBuilder()
+
+  let uploading = false
+  $: uploadImage = async (event) => {
+    try {
+      if (
+        !event.currentTarget.files ||
+        event.currentTarget.files.length === 0
+      ) {
+        throw new Error('You must select an image to upload.')
+      }
+      const file = event.currentTarget.files[0]
+      uploading = true
+      const { url, path } = await supabase.uploadFile({
+        file,
+        bucket: 'assets',
+        path: `/element-assets/images`,
+      })
+      return { url, path }
+    } catch (error) {
+      alert(error.message)
+      return { url: '', path: '' }
+    } finally {
+      uploading = false
+    }
+  }
+
+  let inputRef: HTMLInputElement
 </script>
 
 <div class="flex flex-col space-y-2 w-full relative">
@@ -130,6 +174,58 @@
             <div class="text-block">
               <Editor bind:value={node.content} />
             </div>
+          {:else if node.type == NodeType.image}
+            <div class="relative lg:px-24">
+              <input
+                type="file"
+                name=""
+                class="h-0 opacity-0 top-0 w-0 hidden absolute"
+                accept="image/*"
+                use:portal
+                bind:this={inputRef}
+                id="input-{node.id}"
+                on:change={async (e) => {
+                  try {
+                    const { url, path } = await uploadImage(e)
+                    node.path = path
+                    node.url = url
+                    e.currentTarget.value = ''
+                  } catch (err) {}
+                }}
+              />
+              <button
+                class="flex w-full"
+                title="Subir/cambiar imagen"
+                on:click={() => {
+                  if (typeof document === 'undefined') return
+                  document.getElementById(`input-${node.id}`)?.click()
+                }}
+              >
+                {#if node.url}
+                  <Image
+                    src={node.url}
+                    class="rounded-lg flex w-full"
+                    lazy
+                    width="500"
+                    height="500"
+                    options={{
+                      rs: {
+                        s: '500x500',
+                        m: 'upfit',
+                        b: '000000.0',
+                      },
+                    }}
+                  />
+                {:else}
+                  <div
+                    class="border rounded-lg flex flex-col space-y-4 bg-gray-300 border-gray-300 w-full aspect-square items-center justify-center pointer-events-none dark:bg-dark-800 dark:border-dark-100"
+                  >
+                    <Image32 />
+                    <div class="font-bold text-lg">Subir imagen</div>
+                  </div>
+                {/if}
+              </button>
+            </div>
           {/if}
         </div>
       </div>
@@ -174,7 +270,7 @@
   .text-block :global(h1),
   .text-block :global(h2),
   .text-block :global(h3) {
-    @apply font-bold font-title;
+    @apply font-bold;
   }
 
   .text-block :global(h1) {

@@ -39,6 +39,8 @@
   import Toast from '$lib/components/Toast.svelte'
   import { onDestroy } from 'svelte'
 
+  $: console.log($page)
+
   $: if (browser)
     document.documentElement.classList.toggle('dark', $preferences.darkMode)
 

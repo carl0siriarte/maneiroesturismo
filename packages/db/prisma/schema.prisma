@@ -21,6 +21,7 @@ model User {
   accounts    Account[]
   PlaceMember PlaceMember[]
   Comment     Comment[]
+  PostLike    PostLike[]
 }
 
 // model Tourist {
@@ -83,19 +84,25 @@ model PlaceData {
 }
 
 model PlaceEvent {
-  id        String  @id @default(uuid())
-  thumbnail String?
-  content   String?
-  place     Place   @relation(fields: [placeId], references: [id])
-  slug      String
-  placeId   String
+  id      String  @id @default(uuid())
+  title   String
+  content String?
+  place   Place   @relation(fields: [placeId], references: [id])
+  placeId String
 
   date DateTime
 
   createdAt DateTime @default(now())
   Post      Post[]
+}
 
-  @@unique([placeId, slug])
+model PostLike {
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  post     Post   @relation(fields: [postId], references: [id])
+  postId   String
+
+  @@id([authorId, postId])
 }
 
 model Post {
@@ -113,6 +120,8 @@ model Post {
   placeEventId  String?
   Post          TagsOnPost[]
   CommentOnPost CommentOnPost[]
+
+  likes PostLike[]
 }
 
 model PlaceMember {
