@@ -1,9 +1,14 @@
 <script lang="ts">
   import { browser } from '$app/environment'
+  import { invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { createPageContextStore, pageContext } from '$lib'
+  import Image from '$lib/components/caravaggio/Image.svelte'
+  import { useCaravaggioBuilder } from '$lib/components/caravaggio/useCaravaggio'
   import { tooltip } from '$lib/components/tooltip'
+  import { trpc } from '$lib/trpc/client'
   import type { Post } from '@pkg/db'
+  import { supabase } from '@pkg/shared'
   import {
     ChevronDown24,
     Close16,
@@ -15,12 +20,12 @@
     Map16,
     Map24,
     Search16,
+    Renew16,
   } from 'carbon-icons-svelte'
   import { createEventDispatcher, onMount, setContext } from 'svelte'
   import { portal } from 'svelte-portal'
   import { backOut, expoOut } from 'svelte/easing'
-  import { fade, fly, scale, slide } from 'svelte/transition'
-  import Calendar from './Calendar.svelte'
+  import { fade, fly, scale } from 'svelte/transition'
   import Events from './Events.svelte'
   import Information from './Information.svelte'
   import { feedPages } from './pages'
@@ -76,22 +81,136 @@
   })
 
   const dispatcher = createEventDispatcher<Events>()
+
+  let uploadingBg = false
+  let uploadingLogo = false
+  $: uploadImage = async (event) => {
+    try {
+      if (
+        !event.currentTarget.files ||
+        event.currentTarget.files.length === 0
+      ) {
+        throw new Error('You must select an image to upload.')
+      }
+      const file = event.currentTarget.files[0]
+      uploadingBg = true
+      const { url, path } = await supabase.uploadFile({
+        file,
+        bucket: 'assets',
+        path: `/element-assets/images`,
+      })
+      return { url, path }
+    } catch (error) {
+      alert(error.message)
+      return { url: '', path: '' }
+    } finally {
+      uploadingBg = false
+    }
+  }
+
+  $: coverImage = $pageContext.context.place?.coverImage || ''
+  $: logoImage = $pageContext.context.place?.logo || ''
+
+  async function setBgImage(url: string) {
+    await trpc.places.update.mutate({
+      id: $pageContext.context.place?.id || '',
+      coverImage: url,
+    })
+    // coverImage = url
+    pageContext.update((data) => {
+      data.context.place!.coverImage = url
+      return data
+    })
+    invalidateAll()
+  }
+
+  async function setLogoImage(url: string) {
+    await trpc.places.update.mutate({
+      id: $pageContext.context.place?.id || '',
+      logo: url,
+    })
+    // logoImage = url
+    invalidateAll()
+    pageContext.update((data) => {
+      data.context.place!.logo = url
+      return data
+    })
+  }
 </script>
 
 <svelte:window bind:scrollY />
 
 <div
-  class="bg-gradient-to-br flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
+  class="bg-gradient-to-br bg-center bg-cover flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
   bind:clientHeight={coverHeight}
+  style="background-image: url({useCaravaggioBuilder()(coverImage, {
+    rs: {
+      s: '800x',
+    },
+  })})"
 >
   {#if editable}
     <div class="flex h-full w-full relative">
+      <input
+        type="file"
+        name=""
+        class="h-0 opacity-0 top-0 w-0 hidden absolute"
+        accept="image/*"
+        use:portal
+        id="logo-input"
+        on:change={async (e) => {
+          uploadingLogo = true
+          try {
+            const { url } = await uploadImage(e)
+            alert('')
+            // @ts-ignore
+            e.target.value = ''
+            if (url) {
+              setLogoImage(url)
+            }
+          } catch (err) {
+            console.log(err)
+          } finally {
+            uploadingLogo = false
+          }
+        }}
+      />
+      <input
+        type="file"
+        name=""
+        class="h-0 opacity-0 top-0 w-0 hidden absolute"
+        accept="image/*"
+        use:portal
+        id="cover-input"
+        on:change={async (e) => {
+          uploadingBg = true
+          try {
+            const { url } = await uploadImage(e)
+            alert('')
+            console.log(e)
+            // @ts-ignore
+            e.target.value = ''
+            if (url) {
+              setBgImage(url)
+            }
+          } catch (err) {
+            console.log(err)
+          } finally {
+            uploadingBg = false
+          }
+        }}
+      />
       <button
         use:tooltip
         title="Cambiar fondo"
         class="rounded-full bg-gray-100 shadow-lg opacity-75 p-2 right-0 bottom-0 text-dark-900 duration-200 absolute hover:opacity-100"
+        disabled={uploadingBg}
+        on:click={() => {
+          if (typeof document === 'undefined') return
+          document.getElementById('cover-input')?.click()
+        }}
       >
-        <Image16 />
+        <Renew16 class={uploadingBg ? 'animate-spin' : ''} />
       </button>
     </div>
   {/if}
@@ -140,16 +259,43 @@
       >
         {#if scrollY < coverHeight}
           <div
-            class="rounded-full flex bg-gray-100 border-2 border-gray-300 shadow-lg -mt-18 min-h-24 min-w-24 transform origin-top-left left-0 duration-200 absolute items-center justify-center dark:bg-dark-400 dark:border-dark-100"
-            title="Cambiar imagen"
+            class="rounded-full flex bg-gray-100 border-2 border-gray-300 shadow-lg -mt-18 max-h-24 max-w-24 transform origin-top-left left-0 duration-200 absolute items-center justify-center dark:bg-dark-400 dark:border-dark-100 "
             style="will-change: width, height"
             class:!min-h-16={scrollY >= coverHeight}
             class:!min-w-16={scrollY >= coverHeight}
             class:!h-16={scrollY >= coverHeight}
             class:!w-16={scrollY >= coverHeight}
-            use:tooltip
           >
-            <Image32 />
+            {#if !logoImage}
+              <Image32 />
+            {:else}
+              <Image
+                src={logoImage}
+                class="rounded-full"
+                options={{
+                  o: 'png',
+                  rs: {
+                    s: '200x200',
+                    m: 'fill',
+                    b: '000000.0',
+                  },
+                }}
+              />
+            {/if}
+            {#if editable}
+              <button
+                use:tooltip
+                title="Cambiar imagen"
+                disabled={uploadingLogo}
+                class="rounded-full bg-gray-100 shadow-lg opacity-75 p-2 -top-2 -right-2 text-dark-900 duration-200 absolute hover:opacity-100"
+                on:click={() => {
+                  if (typeof document === 'undefined') return
+                  document.getElementById('logo-input')?.click()
+                }}
+              >
+                <Renew16 class={uploadingLogo ? 'animate-spin' : ''} />
+              </button>
+            {/if}
           </div>
         {:else}
           <div

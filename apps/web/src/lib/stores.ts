@@ -71,7 +71,7 @@ export function createQueryStore<T = any>(prop: string): Writable<T> {
     const urlSearchParams = new URLSearchParams(query)
     const g = `?${urlSearchParams.toString()}`
     if (g !== window.location.search)
-      goto(g, { keepfocus: true, replaceState: true, noscroll: true })
+      goto(g, { keepFocus: true, replaceState: true, noScroll: true })
   }
   return {
     subscribe: (h) => {
@@ -297,7 +297,12 @@ export const createPageContextStore = ({
   }
 }
 
-export const pageContext = derived(
+export const _pageContext = derived(
   [page],
   ([page]): PageContext => page.data.contextData
 )
+
+export const pageContext = writable<PageContext>({
+  layout: 'app',
+  context: {},
+})

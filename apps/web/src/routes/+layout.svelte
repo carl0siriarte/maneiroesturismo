@@ -14,6 +14,8 @@
 
   export let data: LayoutData
 
+  _pageContext.subscribe((data) => pageContext.set(data))
+
   NProgress.configure({
     minimum: 0.16,
     showSpinner: false,
@@ -34,7 +36,7 @@
     }
   })
 
-  import { preferences } from '$lib'
+  import { pageContext, preferences, _pageContext } from '$lib'
   import { browser } from '$app/environment'
   import Toast from '$lib/components/Toast.svelte'
   import { onDestroy } from 'svelte'

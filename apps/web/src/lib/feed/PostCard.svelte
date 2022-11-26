@@ -201,14 +201,26 @@
             >
               <a
                 class="flex font-bold space-x-2 items-center disabled:cursor-not-allowed disabled:opacity-50 hover:not-disabled:underline"
-                href="/"
+                target="_blank"
+                href="https://www.facebook.com/sharer.php?u={encodeURIComponent(
+                  getAbsoluteURL({
+                    subdomain: $pageContext.context.place?.slug || '',
+                    path: `/posts/${post?.id}`,
+                  })
+                )}"
               >
                 <span>Compartir en Facebook</span>
                 <LogoFacebook16 class="flex" />
               </a>
               <a
                 class="flex font-bold space-x-2 items-center disabled:cursor-not-allowed disabled:opacity-50 hover:not-disabled:underline"
-                href="/"
+                target="_blank"
+                href="https://twitter.com/intent/tweet?url={encodeURIComponent(
+                  getAbsoluteURL({
+                    subdomain: $pageContext.context.place?.slug || '',
+                    path: `/posts/${post?.id}`,
+                  })
+                )}"
               >
                 <span>Compartir en Twitter</span>
                 <LogoTwitter16 class="flex" />
