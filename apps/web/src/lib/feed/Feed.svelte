@@ -140,81 +140,154 @@
 
 <svelte:window bind:scrollY />
 
-<div
-  class="bg-gradient-to-br bg-center bg-cover flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
-  bind:clientHeight={coverHeight}
-  style="background-image: url({useCaravaggioBuilder()(coverImage, {
-    rs: {
-      s: '800x',
-    },
-  })})"
->
-  {#if editable}
-    <div class="flex h-full w-full relative">
-      <input
-        type="file"
-        name=""
-        class="h-0 opacity-0 top-0 w-0 hidden absolute"
-        accept="image/*"
-        use:portal
-        id="logo-input"
-        on:change={async (e) => {
-          uploadingLogo = true
-          try {
-            const { url } = await uploadImage(e)
-            alert('')
-            // @ts-ignore
-            e.target.value = ''
-            if (url) {
-              setLogoImage(url)
+{#if coverImage}
+  <div
+    class="bg-gradient-to-br bg-center bg-cover flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
+    bind:clientHeight={coverHeight}
+    style="background-image: url({useCaravaggioBuilder()(coverImage, {
+      rs: {
+        s: '800x',
+      },
+    })})"
+  >
+    {#if editable}
+      <div class="flex h-full w-full relative">
+        <input
+          type="file"
+          name=""
+          class="h-0 opacity-0 top-0 w-0 hidden absolute"
+          accept="image/*"
+          use:portal
+          id="logo-input"
+          on:change={async (e) => {
+            uploadingLogo = true
+            try {
+              const { url } = await uploadImage(e)
+              alert('')
+              // @ts-ignore
+              e.target.value = ''
+              if (url) {
+                setLogoImage(url)
+              }
+            } catch (err) {
+              console.log(err)
+            } finally {
+              uploadingLogo = false
             }
-          } catch (err) {
-            console.log(err)
-          } finally {
-            uploadingLogo = false
-          }
-        }}
-      />
-      <input
-        type="file"
-        name=""
-        class="h-0 opacity-0 top-0 w-0 hidden absolute"
-        accept="image/*"
-        use:portal
-        id="cover-input"
-        on:change={async (e) => {
-          uploadingBg = true
-          try {
-            const { url } = await uploadImage(e)
-            alert('')
-            console.log(e)
-            // @ts-ignore
-            e.target.value = ''
-            if (url) {
-              setBgImage(url)
+          }}
+        />
+        <input
+          type="file"
+          name=""
+          class="h-0 opacity-0 top-0 w-0 hidden absolute"
+          accept="image/*"
+          use:portal
+          id="cover-input"
+          on:change={async (e) => {
+            uploadingBg = true
+            try {
+              const { url } = await uploadImage(e)
+              alert('')
+              console.log(e)
+              // @ts-ignore
+              e.target.value = ''
+              if (url) {
+                setBgImage(url)
+              }
+            } catch (err) {
+              console.log(err)
+            } finally {
+              uploadingBg = false
             }
-          } catch (err) {
-            console.log(err)
-          } finally {
-            uploadingBg = false
-          }
-        }}
-      />
-      <button
-        use:tooltip
-        title="Cambiar fondo"
-        class="rounded-full bg-gray-100 shadow-lg opacity-75 p-2 right-0 bottom-0 text-dark-900 duration-200 absolute hover:opacity-100"
-        disabled={uploadingBg}
-        on:click={() => {
-          if (typeof document === 'undefined') return
-          document.getElementById('cover-input')?.click()
-        }}
-      >
-        <Renew16 class={uploadingBg ? 'animate-spin' : ''} />
-      </button>
-    </div>
-  {/if}
-</div>
+          }}
+        />
+        <button
+          use:tooltip
+          title="Cambiar fondo"
+          class="rounded-full bg-gray-100 shadow-lg opacity-75 p-2 right-0 bottom-0 text-dark-900 duration-200 absolute hover:opacity-100"
+          disabled={uploadingBg}
+          on:click={() => {
+            if (typeof document === 'undefined') return
+            document.getElementById('cover-input')?.click()
+          }}
+        >
+          <Renew16 class={uploadingBg ? 'animate-spin' : ''} />
+        </button>
+      </div>
+    {/if}
+  </div>
+{:else}
+  <div
+    class="bg-gradient-to-br bg-center bg-cover flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
+    bind:clientHeight={coverHeight}
+  >
+    {#if editable}
+      <div class="flex h-full w-full relative">
+        <input
+          type="file"
+          name=""
+          class="h-0 opacity-0 top-0 w-0 hidden absolute"
+          accept="image/*"
+          use:portal
+          id="logo-input"
+          on:change={async (e) => {
+            uploadingLogo = true
+            try {
+              const { url } = await uploadImage(e)
+              alert('')
+              // @ts-ignore
+              e.target.value = ''
+              if (url) {
+                setLogoImage(url)
+              }
+            } catch (err) {
+              console.log(err)
+            } finally {
+              uploadingLogo = false
+            }
+          }}
+        />
+        <input
+          type="file"
+          name=""
+          class="h-0 opacity-0 top-0 w-0 hidden absolute"
+          accept="image/*"
+          use:portal
+          id="cover-input"
+          on:change={async (e) => {
+            uploadingBg = true
+            try {
+              const { url } = await uploadImage(e)
+              alert('')
+              console.log(e)
+              // @ts-ignore
+              e.target.value = ''
+              if (url) {
+                setBgImage(url)
+              }
+            } catch (err) {
+              console.log(err)
+            } finally {
+              uploadingBg = false
+            }
+          }}
+        />
+        <button
+          use:tooltip
+          title="Cambiar fondo"
+          class="rounded-full bg-gray-100 shadow-lg opacity-75 p-2 right-0 bottom-0 text-dark-900 duration-200 absolute hover:opacity-100"
+          disabled={uploadingBg}
+          on:click={() => {
+            if (typeof document === 'undefined') return
+            document.getElementById('cover-input')?.click()
+          }}
+        >
+          <Renew16 class={uploadingBg ? 'animate-spin' : ''} />
+        </button>
+      </div>
+    {/if}
+  </div>
+{/if}
 
 {#if post}
   <div
@@ -259,7 +332,9 @@
       >
         {#if scrollY < coverHeight}
           <div
-            class="rounded-full flex bg-gray-100 border-2 border-gray-300 shadow-lg -mt-18 max-h-24 max-w-24 transform origin-top-left left-0 duration-200 absolute items-center justify-center dark:bg-dark-400 dark:border-dark-100 "
+            class="rounded-full flex bg-gray-100 border-2 border-gray-300 shadow-lg -mt-18 min-h-24 min-w-24 transform origin-top-left left-0 duration-200 absolute items-center justify-center dark:bg-dark-400 dark:border-dark-100 "
+            class:max-w-24={logoImage}
+            class:max-h-24={logoImage}
             style="will-change: width, height"
             class:!min-h-16={scrollY >= coverHeight}
             class:!min-w-16={scrollY >= coverHeight}
