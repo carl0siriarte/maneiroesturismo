@@ -11,6 +11,6 @@
   editable
   post={data.post}
   on:closePostModal={() => {
-    goto($page.url.pathname, { noscroll: true })
+    goto($page.url.pathname, { noScroll: true })
   }}
 />

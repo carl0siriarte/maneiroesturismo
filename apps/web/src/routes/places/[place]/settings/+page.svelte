@@ -24,8 +24,8 @@
       const updated = await trpc.places.update.mutate(place)
       await goto(`/places/${updated.slug}/settings`, {
         replaceState: true,
-        noscroll: true,
-        keepfocus: true,
+        noScroll: true,
+        keepFocus: true,
       })
       invalidateAll()
     } catch (err) {
