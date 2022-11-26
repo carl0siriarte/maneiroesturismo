@@ -163,7 +163,6 @@
             uploadingLogo = true
             try {
               const { url } = await uploadImage(e)
-              alert('')
               // @ts-ignore
               e.target.value = ''
               if (url) {
@@ -187,7 +186,6 @@
             uploadingBg = true
             try {
               const { url } = await uploadImage(e)
-              alert('')
               console.log(e)
               // @ts-ignore
               e.target.value = ''
@@ -234,7 +232,6 @@
             uploadingLogo = true
             try {
               const { url } = await uploadImage(e)
-              alert('')
               // @ts-ignore
               e.target.value = ''
               if (url) {
@@ -258,7 +255,6 @@
             uploadingBg = true
             try {
               const { url } = await uploadImage(e)
-              alert('')
               console.log(e)
               // @ts-ignore
               e.target.value = ''
