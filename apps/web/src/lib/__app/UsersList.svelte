@@ -10,6 +10,7 @@
     ChevronRight24,
     ChevronSort16,
     ChevronUp16,
+    InformationSquare16,
     Launch16,
   } from 'carbon-icons-svelte'
   import { browser } from '$app/environment'
@@ -338,17 +339,21 @@
                 <td class="text-right py-4 px-6">
                   <div class="flex space-x-1 items-center justify-center">
                     <a
+                      use:tooltip
                       class="border-transparent rounded flex mx-auto border-2 p-1 duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                       title="Ver publicaciones"
-                      href="/?user={c.id}"
-                      use:tooltip
-                      type="button"><Launch16 class="flex" /></a
+                      href="{$pageContext.layout == 'app'
+                        ? `/places/${$pageContext.context.place?.slug}`
+                        : '/'}?user={c.id}"
+                      type="button"><InformationSquare16 class="flex" /></a
                     >
                     <a
+                      use:tooltip
                       class="border-transparent rounded flex mx-auto border-2 p-1 duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                       title="Ver eventos"
-                      href="/events?user={c.id}"
-                      use:tooltip
+                      href={$pageContext.layout == 'app'
+                        ? `/places/${$pageContext.context.place?.slug}?feed=events&user=${c.id}`
+                        : `?user=${c.id}`}
                       type="button"><Calendar16 class="flex" /></a
                     >
                   </div>
