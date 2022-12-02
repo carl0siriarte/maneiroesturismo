@@ -108,14 +108,6 @@
         Miembros de la localidad
       </h3>
     </div>
-    <button
-      class="rounded-lg flex font-bold space-x-2 border-2 border-blue-500 text-sm text-xs py-2 px-2 transform-gpu text-blue-500 duration-200 items-center hover:shadow disabled:cursor-not-allowed disabled:opacity-70 not-disabled:hover:scale-95"
-      type="button"
-      on:click={() => (invitationDialog = true)}
-    >
-      <UserProfile16 class="flex" />
-      <span>Invitar usuario</span>
-    </button>
   </div>
   <UsersList />
 </Main>

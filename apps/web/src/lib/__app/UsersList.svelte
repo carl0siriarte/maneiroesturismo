@@ -4,6 +4,7 @@
   import { tooltip } from '$lib/components/tooltip'
   import { tick } from 'svelte'
   import {
+    Calendar16,
     ChevronDown16,
     ChevronLeft24,
     ChevronRight24,
@@ -25,6 +26,7 @@
 
   export let data: QueryTypes['output'] | undefined = undefined
   export let total: number | undefined = undefined
+  export let minimal: boolean = false
 
   let pageNumber = 1
   $: pages = Math.ceil((total || 1) / 20)
@@ -127,8 +129,6 @@
     dark: '(prefers-color-scheme: dark)',
     noanimations: '(prefers-reduced-motion: reduce)',
   }
-
-  const media = watchMedia(mediaqueries)
 </script>
 
 <div
@@ -258,7 +258,7 @@
               <th scope="col" class="py-3 px-6"> Email </th>
               <th scope="col" class="py-3 px-6"> Rol </th>
               <th scope="col" class="py-3 px-6"> Registrado el </th>
-              <th scope="col" class="text-center py-3 px-6"> Acciones </th>
+              <th scope="col" class="text-right py-3 px-6"> Acciones </th>
             </tr>
           </thead>
           <tbody>
@@ -336,14 +336,21 @@
                   </div>
                 </td>
                 <td class="text-right py-4 px-6">
-                  <div class="flex">
-                    <!-- <a
+                  <div class="flex space-x-1 items-center justify-center">
+                    <a
                       class="border-transparent rounded flex mx-auto border-2 p-1 duration-200 hover:border-gray-300 dark:hover:border-gray-500"
-                      title="View customer"
-                      href="/stores/{$layoutData.store?.slug}/customers/{c.id}"
+                      title="Ver publicaciones"
+                      href="/?user={c.id}"
                       use:tooltip
                       type="button"><Launch16 class="flex" /></a
-                    > -->
+                    >
+                    <a
+                      class="border-transparent rounded flex mx-auto border-2 p-1 duration-200 hover:border-gray-300 dark:hover:border-gray-500"
+                      title="Ver eventos"
+                      href="/events?user={c.id}"
+                      use:tooltip
+                      type="button"><Calendar16 class="flex" /></a
+                    >
                   </div>
                 </td>
               </tr>

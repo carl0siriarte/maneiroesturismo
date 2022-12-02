@@ -1,5 +1,6 @@
 <script>
   import { browser } from '$app/environment'
+  import { page } from '$app/stores'
   import Submenu from '$lib/components/Submenu.svelte'
   import { tooltip } from '$lib/components/tooltip'
   import Logo from '$lib/Logo.svelte'
@@ -7,12 +8,33 @@
   import { pageContext, preferences, user } from '$lib/stores'
   import { api } from '@pkg/shared'
   import {
+    Forum16,
+    Home16,
     Logout16,
     Moon24,
     Settings16,
     Sun24,
     UserAvatar24,
+    UserMultiple16,
   } from 'carbon-icons-svelte'
+
+  const placeLinks = [
+    {
+      href: '/',
+      icon: Home16,
+      title: 'Feed',
+    },
+    {
+      href: '/members',
+      icon: UserMultiple16,
+      title: 'Miembros',
+    },
+    {
+      href: '/contact',
+      icon: Forum16,
+      title: 'Contacto',
+    },
+  ]
 
   export let headerHeight = 0
 </script>
@@ -82,6 +104,27 @@
         </div>
       </button>
     </div>
+  </div>
+  <div
+    class="flex flex-nowrap space-x-4 -mb-3 overflow-auto whitespace-nowrap no-scrollbar"
+  >
+    {#each placeLinks as link}
+      {@const href = `${link.href}`}
+      {@const active =
+        link.href == '/'
+          ? ['/', '/information', '/events'].includes($page.url.pathname)
+          : $page.url.pathname.startsWith(href)}
+      <a
+        {href}
+        class="border-transparent flex font-bold space-x-2 border-b-2 text-sm text-xs pb-1 duration-200 items-center hover:border-current"
+        class:border-current={active}
+      >
+        {#if link.icon}
+          <svelte:component this={link.icon} />
+        {/if}
+        <span>{link.title}</span>
+      </a>
+    {/each}
   </div>
 </header>
 

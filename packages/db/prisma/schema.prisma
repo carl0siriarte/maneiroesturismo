@@ -2,9 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
-  binaryTargets   = ["debian-openssl-1.1.x", "linux-musl"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["debian-openssl-1.1.x", "linux-musl"]
 }
 
 datasource db {
@@ -13,45 +12,29 @@ datasource db {
 }
 
 model User {
-  id          String        @id @unique @default(uuid())
-  email       String        @unique
-  name        String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  accounts    Account[]
-  PlaceMember PlaceMember[]
-  Comment     Comment[]
-  PostLike    PostLike[]
+  id                String              @id @unique @default(uuid())
+  email             String              @unique
+  name              String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  accounts          Account[]
+  PlaceMember       PlaceMember[]
+  Comment           Comment[]
+  PostLike          PostLike[]
+  EventConfirmation EventConfirmation[]
+  Post              Post[]
+  ContactMessage    ContactMessage[]
+  PlaceEvent        PlaceEvent[]
 }
-
-// model Tourist {
-//   id        String @id @unique @default(uuid())
-//   email     String
-//   firstName String
-//   lastName  String
-
-//   accounts Account[]
-//   place    Place?    @relation(fields: [placeId], references: [id], onDelete: Cascade)
-//   placeId  String?
-
-//   createdAt DateTime  @default(now())
-//   Comment   Comment[]
-
-//   @@unique([email, placeId])
-// }
 
 model Account {
   id       String  @id @unique @default(uuid())
   provider String
   secret   String?
 
-  // tourist   Tourist? @relation(fields: [touristId], references: [id], onDelete: Cascade)
-  // touristId String?
-
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
 
-  // @@unique([provider, touristId])
   @@unique([provider, userId])
 }
 
@@ -67,13 +50,27 @@ model Place {
 
   logo       String?
   coverImage String?
-  // tourists   Tourist[]
 
-  Tag         Tag[]
-  PlaceMember PlaceMember[]
-  PlaceEvent  PlaceEvent[]
-  Post        Post[]
-  PlaceData   PlaceData?
+  PlaceMember    PlaceMember[]
+  PlaceEvent     PlaceEvent[]
+  Post           Post[]
+  PlaceData      PlaceData?
+  ContactMessage ContactMessage[]
+}
+
+model ContactMessage {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now())
+
+  place Place @relation(fields: [placeId], references: [id])
+
+  author      User?   @relation(fields: [userId], references: [id])
+  contactData Json?
+  data        String?
+  type        String
+  placeId     String
+  userId      String?
 }
 
 model PlaceData {
@@ -90,10 +87,24 @@ model PlaceEvent {
   place   Place   @relation(fields: [placeId], references: [id])
   placeId String
 
-  date DateTime
+  date       DateTime
+  isProposal Boolean  @default(false)
+  author     User?    @relation(fields: [authorId], references: [id])
 
-  createdAt DateTime @default(now())
-  Post      Post[]
+  createdAt     DateTime            @default(now())
+  confirmations EventConfirmation[]
+  authorId      String?
+}
+
+model EventConfirmation {
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String
+  event        Post        @relation(fields: [eventId], references: [id])
+  eventId      String
+  PlaceEvent   PlaceEvent? @relation(fields: [placeEventId], references: [id])
+  placeEventId String?
+
+  @@id([userId, eventId])
 }
 
 model PostLike {
@@ -112,16 +123,16 @@ model Post {
   place     Place   @relation(fields: [placeId], references: [id], onDelete: Cascade)
   placeId   String
 
-  event  PlaceEvent? @relation(fields: [placeEventId], references: [id])
-  edited Boolean     @default(false)
+  author User?   @relation(fields: [authorId], references: [id])
+  edited Boolean @default(false)
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  placeEventId  String?
-  Post          TagsOnPost[]
   CommentOnPost CommentOnPost[]
 
-  likes PostLike[]
+  likes             PostLike[]
+  EventConfirmation EventConfirmation[]
+  authorId          String?
 }
 
 model PlaceMember {
@@ -134,27 +145,6 @@ model PlaceMember {
   role String @default("regular") // owner | admin | regular
 
   @@id([memberId, placeId])
-}
-
-model Tag {
-  id String @id @default(uuid())
-
-  name String
-
-  place      Place        @relation(fields: [placeId], references: [id], onDelete: Cascade)
-  placeId    String
-  TagsOnPost TagsOnPost[]
-
-  @@unique([name, placeId])
-}
-
-model TagsOnPost {
-  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  tagId  String
-  postId String
-
-  @@id([postId, tagId])
 }
 
 model Comment {
@@ -181,97 +171,3 @@ model CommentOnPost {
 
   @@id([postId, commentId])
 }
-
-// model Category {
-//   id    String @id @default(uuid())
-//   place Place  @relation(fields: [placeId], references: [id])
-//   name  String
-
-//   placeId String
-
-//   @@unique([name, placeId])
-// }
-
-// model CategoriesOnProducts {
-//   product    Product         @relation(fields: [productId], references: [id])
-//   category   ProductCategory @relation(fields: [categoryId], references: [id])
-//   productId  String
-//   categoryId String
-
-//   @@id([productId, categoryId])
-// }
-
-// model TagsOnProducts {
-//   product      Product    @relation(fields: [productId], references: [id])
-//   tag          ProductTag @relation(fields: [productTagId], references: [id])
-//   productId    String
-//   productTagId String
-
-//   @@id([productId, productTagId])
-// }
-
-// enum OrderStatus {
-//   paid
-//   processing
-//   pending
-// }
-
-// enum FulfillmentStatus {
-//   fulfilled
-//   unfulfilled
-//   partially_fulfilled
-//   awaiting_shipment
-//   scheduled
-//   on_hold
-// }
-
-// model Order {
-//   id    String      @id @default(uuid())
-//   items OrderItem[]
-//   fees  OrderFee[]
-
-//   token String?
-
-//   status            OrderStatus       @default(pending)
-//   fulfillmentStatus FulfillmentStatus @default(unfulfilled)
-//   total             Float             @default(0)
-
-//   billingData  Json?
-//   shippingData Json?
-
-//   place   Place  @relation(fields: [placeId], references: [id])
-//   placeId String
-
-//   paymentMethods Json?
-
-//   createdAt DateTime @default(now())
-
-//   tourist   Tourist? @relation(fields: [touristId], references: [id])
-//   touristId String?
-// }
-
-// model OrderItem {
-//   id String @id @default(uuid())
-
-//   cost      Float @default(0)
-//   basePrice Float @default(0)
-//   fulfilled Int   @default(0)
-//   quantity  Int
-
-//   order   Order?  @relation(fields: [orderId], references: [id])
-//   orderId String?
-
-//   productId String
-// }
-
-// model OrderFee {
-//   id String @id @default(uuid())
-
-//   name String
-
-//   fixed      Float @default(0)
-//   percentage Float @default(0)
-
-//   order   Order?  @relation(fields: [orderId], references: [id])
-//   orderId String?
-// }

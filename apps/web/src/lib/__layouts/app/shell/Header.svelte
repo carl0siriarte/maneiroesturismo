@@ -16,6 +16,7 @@
     UserAccess16,
     UserProfile16,
     UserCertification16,
+    Forum16,
   } from 'carbon-icons-svelte'
   import { expoOut } from 'svelte/easing'
   import { slide } from 'svelte/transition'
@@ -34,6 +35,11 @@
       href: '/members',
       icon: UserMultiple16,
       title: 'Miembros',
+    },
+    {
+      href: '/contact',
+      icon: Forum16,
+      title: 'Contacto',
     },
     {
       href: '/settings',

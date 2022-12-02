@@ -18,6 +18,7 @@ export type ListEventsInput = {
   month: number
   year: number
   placeId: string
+  isProposal?: boolean
 }
 
 export async function listEvents(
@@ -33,6 +34,8 @@ export async function listEvents(
       id: true,
       placeId: true,
       title: true,
+      isProposal: true,
+      authorId: true,
     },
     where: {
       placeId: input.placeId,
@@ -40,6 +43,7 @@ export async function listEvents(
         gte: firstDay,
         lte: lastDay,
       },
+      isProposal: input.isProposal,
     },
     orderBy: {
       createdAt: 'desc',

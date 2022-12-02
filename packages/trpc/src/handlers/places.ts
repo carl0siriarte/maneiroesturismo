@@ -108,19 +108,6 @@ const queries = t.router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const role = await db.checkPlaceMember(
-        {
-          memberId: ctx.userId || '',
-          placeId: input.placeId,
-        },
-        ctx.prisma
-      )
-      if (!role || role == 'regular') {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Este usuario no tiene los permisos necesarios',
-        })
-      }
       return await db.listUsers(input, ctx.prisma)
     }),
   get: procedure

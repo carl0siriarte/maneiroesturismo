@@ -6,9 +6,7 @@
 </script>
 
 <div
-  class="flex flex-col flex-grow space-y-4 p-4 text-dark-900 items-center justify-center dark:text-gray-100"
-  class:-m-4={$pageContext.layout === 'app'}
-  class:lg:-m-6={$pageContext.layout === 'app'}
+  class="flex flex-col flex-grow space-y-4 w-full p-4 text-dark-900 items-center justify-center dark:text-gray-100"
 >
   <div class="font-bold text-6xl leading-[0.7]">
     {$page.status}
@@ -21,7 +19,7 @@
   <p class="my-4">{$page.error?.message}</p>
 
   {#if $page.error?.stack}
-    <div class="w-full max-h-[35vh] relative lg:w-6/10">
+    <div class="relative">
       <div class="top-2 right-2 absolute">
         <button
           title="Copy"
