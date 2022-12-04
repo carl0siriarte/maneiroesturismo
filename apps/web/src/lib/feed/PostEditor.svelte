@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { tooltip } from '$lib/components/tooltip'
   import Editor from '$lib/editor/Editor.svelte'
   import { pageContext, user } from '$lib/stores'
   import { trpc } from '$lib/trpc/client'

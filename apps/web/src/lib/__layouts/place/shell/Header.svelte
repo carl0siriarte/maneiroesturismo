@@ -5,7 +5,7 @@
   import { tooltip } from '$lib/components/tooltip'
   import Logo from '$lib/Logo.svelte'
 
-  import { pageContext, preferences, user } from '$lib/stores'
+  import { preferences, user } from '$lib/stores'
   import { api } from '@pkg/shared'
   import {
     Forum16,
