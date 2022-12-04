@@ -4,6 +4,7 @@ import type {
   PlaceEvent as _PlaceEvent,
   Post as _Post,
   User as _User,
+  ContactMessage as _ContactMessage,
 } from '@prisma/client'
 
 export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U
@@ -16,6 +17,8 @@ export type Page<T> = {
 export type Place = _Place
 
 export type User = _User
+
+export type ContactMessage = _ContactMessage
 
 export type Comment = _Comment & {
   author: User | null
