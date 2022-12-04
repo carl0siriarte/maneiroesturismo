@@ -2,7 +2,7 @@
   import Viewport from '$lib/components/Viewport.svelte'
   import Logo from '$lib/Logo.svelte'
   import { pageContext } from '$lib/stores'
-  import { Map16, UserAvatarFilled32 } from 'carbon-icons-svelte'
+  import { Map16 } from 'carbon-icons-svelte'
 
   export let avatar = true
 </script>

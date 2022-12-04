@@ -63,7 +63,7 @@
       <Submenu>
         <div class="content" slot="button">
           <div
-            class="bg-gradient-to-br border rounded-full cursor-pointer flex font-bold font-title from-green-300 to-pink-600 border-gray-200 h-32px text-white text-xs leading-[0] w-32px items-center justify-center uppercase dark:bg-gray-600 dark:from-green-400 dark:to-pink-700"
+            class="bg-gradient-to-br border rounded-full cursor-pointer flex font-bold font-title from-green-300 to-sky-800 border-gray-200 h-32px text-white text-xs leading-[0] w-32px items-center justify-center uppercase dark:bg-gray-600 dark:from-green-400 dark:to-pink-700"
           >
             {user.name[0]}
           </div>
