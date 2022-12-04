@@ -109,5 +109,5 @@
       </h3>
     </div>
   </div>
-  <UsersList />
+  <UsersList minimal />
 </Main>

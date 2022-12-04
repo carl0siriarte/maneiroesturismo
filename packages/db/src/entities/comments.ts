@@ -5,10 +5,10 @@ export type CreateCommentInput = TrimProps<
   Comment,
   'id' | 'createdAt' | 'author'
 > &
-  Record<'postId', string>
+  Partial<Record<'postId' | 'eventId', string>>
 
 export async function createComment(
-  { postId, ...input }: CreateCommentInput,
+  { postId, eventId, ...input }: CreateCommentInput,
   prisma = $prisma
 ): Promise<Comment> {
   return await prisma.comment.create({
@@ -17,18 +17,27 @@ export async function createComment(
     },
     data: {
       ...input,
-      CommentOnPost: {
-        create: {
-          postId,
-        },
-      },
+      CommentOnEvent: eventId
+        ? {
+            create: {
+              eventId,
+            },
+          }
+        : undefined,
+      CommentOnPost: postId
+        ? {
+            create: {
+              postId,
+            },
+          }
+        : undefined,
     },
   })
 }
 
 export type ListCommentsInput = {
   originId: string
-  origin: 'post' | 'comment'
+  origin: 'post' | 'comment' | 'event'
   page: number
   pageSize: number
 }
@@ -46,6 +55,12 @@ export async function listComments(
   >
 > {
   const where: Prisma.CommentWhereInput = {
+    CommentOnEvent:
+      origin == 'event'
+        ? {
+            some: { eventId: originId },
+          }
+        : undefined,
     CommentOnPost:
       origin == 'post'
         ? {

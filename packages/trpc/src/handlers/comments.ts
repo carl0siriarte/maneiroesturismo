@@ -6,7 +6,8 @@ const authProcedure = procedure.meta({ auth: 'user' })
 
 const createCommentInput = z.object({
   content: z.string(),
-  postId: z.string(),
+  originId: z.string(),
+  origin: z.enum(['post', 'comment', 'event']).optional().default('post'),
   replyToId: z.string().optional(),
 })
 
@@ -15,7 +16,8 @@ const createPost = authProcedure
   .mutation(async ({ ctx, input }) => {
     return await db.createComment(
       {
-        postId: input.postId,
+        postId: input.origin == 'post' ? input.originId : undefined,
+        eventId: input.origin == 'event' ? input.originId : undefined,
         content: input.content,
         userId: ctx.userId!,
         replyToId: input.replyToId || null,
@@ -26,7 +28,7 @@ const createPost = authProcedure
 
 const listCommentsInput = z.object({
   originId: z.string(),
-  origin: z.enum(['post', 'comment']).optional().default('post'),
+  origin: z.enum(['post', 'comment', 'event']).optional().default('post'),
   page: z.number().min(1).default(1),
   pageSize: z.number().min(1).default(20),
 })

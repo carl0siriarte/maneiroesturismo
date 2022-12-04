@@ -1,14 +1,15 @@
 <script lang="ts">
   import { browser } from '$app/environment'
-  import { invalidateAll } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { createPageContextStore, pageContext } from '$lib'
   import Image from '$lib/components/caravaggio/Image.svelte'
   import { useCaravaggioBuilder } from '$lib/components/caravaggio/useCaravaggio'
   import { tooltip } from '$lib/components/tooltip'
   import { trpc } from '$lib/trpc/client'
-  import type { Post } from '@pkg/db'
+  import type { Post, User } from '@pkg/db'
   import { supabase } from '@pkg/shared'
+  import type { RouterTypes } from '@pkg/trpc'
   import {
     ChevronDown24,
     Close16,
@@ -21,6 +22,7 @@
     Map24,
     Search16,
     Renew16,
+    Close24,
   } from 'carbon-icons-svelte'
   import { createEventDispatcher, onMount, setContext } from 'svelte'
   import { portal } from 'svelte-portal'
@@ -34,7 +36,9 @@
   import Posts from './Posts.svelte'
 
   export let spa = false
-  export let post: Post | null
+  export let post: RouterTypes['posts']['get']['output'] & {
+    thumbnail?: string
+  }
 
   $: feedPage =
     (spa ? $page.url.searchParams.get('feed') : $page.params.feedPage) || ''
@@ -80,7 +84,33 @@
     mounted = true
   })
 
+  let user: User | undefined
+
+  $: userId = $page.url.searchParams.get('user')
+  $: userId, fetchUser()
+
+  async function fetchUser() {
+    switch (userId) {
+      case null:
+        user = undefined
+        break
+      default:
+        const members = await trpc.places.members.query({
+          ids: [userId],
+          placeId: $pageContext.context.place?.id || '',
+        })
+        user = members.count ? members.items[0] : undefined
+    }
+  }
+
   const dispatcher = createEventDispatcher<Events>()
+  $: nonFilteredUrl = () => {
+    const query = new URLSearchParams($page.url.searchParams)
+    query.delete('user')
+    return (
+      $page.url.pathname + (query.entries.length ? '?' + query.toString() : '')
+    )
+  }
 
   let uploadingBg = false
   let uploadingLogo = false
@@ -460,7 +490,31 @@
             </form>
           {/if}
         </div>
-        {#if editable && feedPage == ''}
+        {#if userId && feedPage != 'information'}
+          <div class="flex w-full items-center justify-between">
+            <div class="flex flex-col space-y-2">
+              <div class="flex space-x-4 items-center">
+                <div
+                  class="bg-white rounded-full flex border-2 border-gray-300 min-h-12 min-w-12 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
+                >
+                  <Image16 />
+                </div>
+                <div class="flex flex-col">
+                  <h2 class="font-bold text-xs">Filtrando resultados</h2>
+                  <h4 class="font-bold text-black text-xs dark:text-white ">
+                    {user?.name || 'Cargando...'}
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <a
+              class="flex transform transition-transform duration-200 hover:scale-90"
+              href={nonFilteredUrl()}
+            >
+              <Close24 />
+            </a>
+          </div>
+        {:else if editable && feedPage == ''}
           {#if scrollY < coverHeight || showControls}
             <div class="flex flex-col w-full" in:fade|local={{ duration: 200 }}>
               <PostEditor

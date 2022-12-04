@@ -91,18 +91,17 @@ model PlaceEvent {
   isProposal Boolean  @default(false)
   author     User?    @relation(fields: [authorId], references: [id])
 
-  createdAt     DateTime            @default(now())
-  confirmations EventConfirmation[]
-  authorId      String?
+  createdAt      DateTime            @default(now())
+  confirmations  EventConfirmation[]
+  authorId       String?
+  CommentOnEvent CommentOnEvent[]
 }
 
 model EventConfirmation {
-  user         User        @relation(fields: [userId], references: [id])
-  userId       String
-  event        Post        @relation(fields: [eventId], references: [id])
-  eventId      String
-  PlaceEvent   PlaceEvent? @relation(fields: [placeEventId], references: [id])
-  placeEventId String?
+  user    User       @relation(fields: [userId], references: [id])
+  userId  String
+  event   PlaceEvent @relation(fields: [eventId], references: [id])
+  eventId String
 
   @@id([userId, eventId])
 }
@@ -130,9 +129,8 @@ model Post {
   updatedAt     DateTime        @updatedAt
   CommentOnPost CommentOnPost[]
 
-  likes             PostLike[]
-  EventConfirmation EventConfirmation[]
-  authorId          String?
+  likes    PostLike[]
+  authorId String?
 }
 
 model PlaceMember {
@@ -158,9 +156,19 @@ model Comment {
   createdAt     DateTime        @default(now())
   CommentOnPost CommentOnPost[]
 
-  replyToId String?
-  replyTo   Comment?  @relation("replies", fields: [replyToId], references: [id], onDelete: Cascade)
-  replies   Comment[] @relation("replies")
+  replyToId      String?
+  replyTo        Comment?         @relation("replies", fields: [replyToId], references: [id], onDelete: Cascade)
+  replies        Comment[]        @relation("replies")
+  CommentOnEvent CommentOnEvent[]
+}
+
+model CommentOnEvent {
+  comment   Comment    @relation(fields: [commentId], references: [id])
+  event     PlaceEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  commentId String
+  eventId   String
+
+  @@id([eventId, commentId])
 }
 
 model CommentOnPost {

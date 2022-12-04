@@ -9,7 +9,8 @@
   import { pageContext, user } from '$lib/stores'
   import { trpc } from '$lib/trpc/client'
   import { getAbsoluteURL } from '$lib/utils/host'
-  import type { Post } from '@pkg/db'
+  import type { Post, User } from '@pkg/db'
+  import type { RouterTypes } from '@pkg/trpc'
   import {
     AddComment24,
     Close24,
@@ -25,12 +26,8 @@
   import Commentaries from './Commentaries.svelte'
 
   export let post:
-    | (Post & {
-        _count?: {
-          CommentOnPost?: number
-          likes?: number
-        }
-        liked?: boolean
+    | (RouterTypes['posts']['get']['output'] & {
+        thumbnail?: string
       })
     | undefined = undefined
   export let alt = false
@@ -51,19 +48,27 @@
 >
   {#if !alt}
     <div class="flex flex-col space-y-2">
-      <div class="flex space-x-4 items-center">
-        <div
-          class="bg-white rounded-full flex border-2 border-gray-300 min-h-12 min-w-12 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
-        >
-          <Image16 />
-        </div>
+      <div class="flex space-x-2 items-center">
+        {#if post?.author}
+          <div
+            class="bg-gradient-to-br border rounded-full cursor-pointer flex font-bold font-title from-green-300 to-pink-600 border-gray-200 h-32px text-white text-xs leading-[0] w-32px items-center justify-center uppercase dark:bg-gray-600 dark:from-green-400 dark:to-pink-700"
+          >
+            {post.author.name[0]}
+          </div>
+        {:else}
+          <div
+            class="bg-white rounded-full flex border-2 border-gray-300 min-h-12 min-w-12 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
+          >
+            <Image16 />
+          </div>
+        {/if}
         <h4 class="font-bold text-black text-sm dark:text-white ">
-          {$pageContext.context.place?.name}
+          {post?.author?.name || $pageContext.context.place?.name}
         </h4>
       </div>
       {#if post}
         <div class="text-xs text-gray-500">
-          Publicado el {post.createdAt.toLocaleString()}
+          Publicado el {post?.createdAt.toLocaleString()}
         </div>
       {/if}
     </div>
@@ -90,15 +95,23 @@
           {#if alt}
             <div class="flex mb-2 w-full justify-between">
               <div class="flex space-x-2 items-center">
-                <div
-                  class="bg-white rounded-full flex border-2 border-gray-300 min-h-8 min-w-8 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
-                >
-                  <Image16 class="h-10px w-10px" />
-                </div>
-                <div class="flex flex-col space-y-1 mb-2">
+                {#if post?.author}
+                  <div
+                    class="bg-gradient-to-br border rounded-full cursor-pointer flex font-bold font-title from-green-300 to-pink-600 border-gray-200 h-32px text-white text-xs leading-[0] w-32px items-center justify-center uppercase dark:bg-gray-600 dark:from-green-400 dark:to-pink-700"
+                  >
+                    {post.author.name[0]}
+                  </div>
+                {:else}
+                  <div
+                    class="bg-white rounded-full flex border-2 border-gray-300 min-h-12 min-w-12 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
+                  >
+                    <Image16 />
+                  </div>
+                {/if}
+                <div class="flex flex-col space-y-1">
                   <h4 class="text-black text-xs dark:text-white ">
                     <strong>
-                      {$pageContext.context.place?.name}
+                      {post?.author?.name || $pageContext.context.place?.name}
                     </strong>
                   </h4>
                   <div class="text-xs text-gray-500">

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { tooltip } from '$lib/components/tooltip'
   import Editor from '$lib/editor/Editor.svelte'
-  import { pageContext } from '$lib/stores'
+  import { pageContext, user } from '$lib/stores'
   import { trpc } from '$lib/trpc/client'
   import type { Post } from '@pkg/db'
   import { Document16, Image24 } from 'carbon-icons-svelte'
@@ -18,9 +18,9 @@
     publishing = true
     try {
       const post = await trpc.posts.create.mutate({
-        placeEventId: null,
         thumbnail: null,
         content: value,
+        authorId: $user?.id || null,
         placeId: $pageContext.context.place?.id || '',
       })
       dispatch('create', post)
@@ -59,13 +59,13 @@
         {count}/500 caracteres
       </div>
       <div class="flex space-x-4 items-center">
-        <button
+        <!-- <button
           class="flex text-gray-400 relative hover:text-black dark:hover:text-white"
           title="Subir imagen"
           use:tooltip
         >
           <Image24 />
-        </button>
+        </button> -->
         <button
           class="rounded font-bold ml-auto border-2 border-blue-500 text-xs py-1 px-2 text-blue-500 duration-200 disabled:cursor-not-allowed disabled:opacity-50 not-disabled:hover:bg-blue-500 not-disabled:hover:text-white"
           disabled={!valid || publishing}
@@ -87,7 +87,7 @@
   .text-block :global(h1),
   .text-block :global(h2),
   .text-block :global(h3) {
-    @apply font-bold font-title;
+    @apply font-bold;
   }
 
   .text-block :global(h1) {

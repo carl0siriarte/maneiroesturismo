@@ -1,5 +1,5 @@
 import { prisma as $prisma } from 'src/prisma.js'
-import type { PlaceEvent, TrimProps } from 'src/types.js'
+import type { PlaceEvent, TrimProps, User } from 'src/types.js'
 
 export type CreateEventInput = TrimProps<PlaceEvent, 'id' | 'createdAt'>
 
@@ -18,13 +18,21 @@ export type ListEventsInput = {
   month: number
   year: number
   placeId: string
+  authorId?: string | null
   isProposal?: boolean
 }
 
 export async function listEvents(
   input: ListEventsInput,
   prisma = $prisma
-): Promise<TrimProps<PlaceEvent, 'content'>[]> {
+): Promise<
+  (TrimProps<PlaceEvent, 'content'> & {
+    _count: {
+      CommentOnEvent: number
+      confirmations: number
+    }
+  })[]
+> {
   const firstDay = new Date(input.year, input.month - 1, 1)
   const lastDay = new Date(input.year, input.month, 0)
   const events = prisma.placeEvent.findMany({
@@ -36,9 +44,16 @@ export async function listEvents(
       title: true,
       isProposal: true,
       authorId: true,
+      _count: {
+        select: {
+          confirmations: true,
+          CommentOnEvent: true,
+        },
+      },
     },
     where: {
       placeId: input.placeId,
+      authorId: input.authorId,
       date: {
         gte: firstDay,
         lte: lastDay,
@@ -55,10 +70,28 @@ export async function listEvents(
 export async function getEvent(
   id: string,
   prisma = $prisma
-): Promise<PlaceEvent | null> {
+): Promise<
+  | (PlaceEvent & {
+      _count: {
+        CommentOnEvent: number
+        confirmations: number
+      }
+      author: User | null
+    })
+  | null
+> {
   const event = prisma.placeEvent.findUnique({
     where: {
       id,
+    },
+    include: {
+      _count: {
+        select: {
+          confirmations: true,
+          CommentOnEvent: true,
+        },
+      },
+      author: true,
     },
   })
   return event

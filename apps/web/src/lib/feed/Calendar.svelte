@@ -2,7 +2,7 @@
   import { browser } from '$app/environment'
   import { pageContext } from '$lib/stores'
   import { trpc } from '$lib/trpc/client'
-  import type { RouterTypes } from '@pkg/trpc'
+  import { page as app } from '$app/stores'
   import CalendarDays from './CalendarDays.svelte'
 
   const dayNames = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
@@ -32,8 +32,9 @@
     if (!browser) return
     const events = await trpc.events.list.query({
       year,
-      placeId: $pageContext.context.place?.id || '',
       month: month + 1,
+      placeId: $pageContext.context.place?.id || '',
+      authorId: $app.url.searchParams.get('user') || undefined,
     })
     days = days.map((day) => ({
       ...day,
@@ -42,7 +43,7 @@
     }))
   }
 
-  $: month, year, initContent()
+  $: month, year, $app.url.searchParams.get('user'), initContent()
 
   type Event = {
     title: string

@@ -7,9 +7,9 @@ const authProcedure = procedure.meta({ auth: 'user' })
 
 const createPostInput = z.object({
   placeId: z.string(),
+  authorId: z.string().nullable(),
   content: z.string(),
   thumbnail: z.string().nullable(),
-  placeEventId: z.string().nullable(),
 })
 
 const createPost = authProcedure
@@ -35,7 +35,6 @@ const updatePostInput = z.object({
   id: z.string(),
   content: z.string().optional(),
   thumbnail: z.string().nullish(),
-  placeEventId: z.string().nullish(),
 })
 
 const updatePost = authProcedure
@@ -82,6 +81,7 @@ const deletePost = authProcedure
 
 const listPostsInput = z.object({
   placeId: z.string(),
+  authorId: z.string().nullable().optional(),
   ids: z.string().array().optional(),
   filter: z.string().optional(),
   page: z.number().min(1).default(1),

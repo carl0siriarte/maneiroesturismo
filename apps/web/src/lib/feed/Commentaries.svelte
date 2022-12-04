@@ -18,6 +18,7 @@
   export let data: RouterTypes['comments']['list']['output'] | undefined =
     undefined
   let fetching = false
+  export let origin: 'post' | 'event' = 'post'
 
   export let pageSize = 3
 
@@ -31,7 +32,7 @@
     page = page + 1
     const newData = await trpc.comments.list.query({
       originId: replyToId || postId,
-      origin: replyToId ? 'comment' : 'post',
+      origin: replyToId ? 'comment' : origin,
       pageSize,
       page,
     })
@@ -80,6 +81,7 @@
   {#if $user && !replyToId}
     <CommentaryEditor
       {postId}
+      {origin}
       on:create={({ detail }) => pushComment(detail)}
     />
   {/if}
@@ -135,6 +137,7 @@
             <div transition:slide={{ duration: 200 }}>
               <CommentaryEditor
                 {postId}
+                {origin}
                 replyToId={comment.id}
                 on:create={({ detail }) => {
                   pushers[comment.id]?.(detail)

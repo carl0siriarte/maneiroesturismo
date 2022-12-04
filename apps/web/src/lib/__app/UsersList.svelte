@@ -140,7 +140,7 @@
       class="bg-white border rounded border-gray-300 text-xs leading-tight w-full py-2 px-3 appearance-none dark:bg-dark-400 dark:border-dark-100 focus:outline-none focus:shadow-outline"
       type="search"
       bind:value={nameSearch}
-      placeholder="Busca por id, nombre, rol o email"
+      placeholder="Busca por {!minimal ? 'id, ' : ''}nombre, rol o email"
     />
     <Submenu>
       <button
@@ -253,10 +253,14 @@
             class="bg-gray-50 text-xs top-0 text-gray-700 z-20 uppercase sticky dark:bg-dark-400 dark:text-gray-400"
           >
             <tr>
-              <th scope="col" class="py-3 px-6"> Id </th>
+              {#if !minimal}
+                <th scope="col" class="py-3 px-6"> Id </th>
+              {/if}
               <th scope="col" class="text-center py-3 px-6"> Avatar </th>
               <th scope="col" class="py-3 px-6"> Nombre </th>
-              <th scope="col" class="py-3 px-6"> Email </th>
+              {#if !minimal}
+                <th scope="col" class="py-3 px-6"> Email </th>
+              {/if}
               <th scope="col" class="py-3 px-6"> Rol </th>
               <th scope="col" class="py-3 px-6"> Registrado el </th>
               <th scope="col" class="text-right py-3 px-6"> Acciones </th>
@@ -269,24 +273,26 @@
                 class:border-b={idx !== data.items.length - 1}
                 class:dark:border-gray-700={idx !== data.items.length - 1}
               >
-                <th
-                  scope="row"
-                  class="font-bold py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  <div class="flex w-12ch">
-                    <p
-                      class="rounded cursor-pointer font-normal bg-gray-100 text-xs p-1 transform whitespace-nowrap overflow-ellipsis overflow-hidden dark:bg-dark-100 hover:overflow-visible "
-                      title="Copy to clipboard"
-                      on:click={() =>
-                        typeof navigator == 'undefined'
-                          ? null
-                          : navigator.clipboard.writeText(c.id)}
-                      use:tooltip
-                    >
-                      {c.id}
-                    </p>
-                  </div>
-                </th>
+                {#if !minimal}
+                  <th
+                    scope="row"
+                    class="font-bold py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    <div class="flex w-12ch">
+                      <p
+                        class="rounded cursor-pointer font-normal bg-gray-100 text-xs p-1 transform whitespace-nowrap overflow-ellipsis overflow-hidden dark:bg-dark-100 hover:overflow-visible "
+                        title="Copy to clipboard"
+                        on:click={() =>
+                          typeof navigator == 'undefined'
+                            ? null
+                            : navigator.clipboard.writeText(c.id)}
+                        use:tooltip
+                      >
+                        {c.id}
+                      </p>
+                    </div>
+                  </th>
+                {/if}
                 <td>
                   <div class="flex">
                     <div
@@ -310,13 +316,18 @@
                     </p>
                   </div>
                 </td>
-                <td>
-                  <div class="flex w-full py-4 px-6">
-                    <a class="font-bold text-xs w-full" href="mailto:{c.email}">
-                      {c.email}
-                    </a>
-                  </div>
-                </td>
+                {#if !minimal}
+                  <td>
+                    <div class="flex w-full py-4 px-6">
+                      <a
+                        class="font-bold text-xs w-full"
+                        href="mailto:{c.email}"
+                      >
+                        {c.email}
+                      </a>
+                    </div>
+                  </td>
+                {/if}
                 <th
                   scope="row"
                   class="font-bold py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
@@ -353,7 +364,7 @@
                       title="Ver eventos"
                       href={$pageContext.layout == 'app'
                         ? `/places/${$pageContext.context.place?.slug}?feed=events&user=${c.id}`
-                        : `?user=${c.id}`}
+                        : `/events?&user=${c.id}`}
                       type="button"><Calendar16 class="flex" /></a
                     >
                   </div>

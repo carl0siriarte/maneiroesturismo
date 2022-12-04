@@ -41,8 +41,6 @@
   import Toast from '$lib/components/Toast.svelte'
   import { onDestroy } from 'svelte'
 
-  $: console.log($page)
-
   $: if (browser)
     document.documentElement.classList.toggle('dark', $preferences.darkMode)
 
@@ -71,7 +69,7 @@
   {@html fontsTag}
 </svelte:head>
 
-<div data-sveltekit-prefetch>
+<div data-sveltekit-preload-data="hover">
   <svelte:component this={data.layoutComponent}>
     <slot />
   </svelte:component>

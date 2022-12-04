@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page as app } from '$app/stores'
   import { browser } from '$app/environment'
   import { tooltip } from '$lib/components/tooltip'
   import { pageContext } from '$lib/stores'
@@ -22,9 +23,9 @@
 
   let waitTimeout: NodeJS.Timeout
 
-  $: search(filter)
+  $: $app.url.searchParams.get('user'), search(filter)
 
-  function search(filter: string) {
+  function search(_filter: string) {
     if (!browser) return
     if (data) {
       page = 0
@@ -41,6 +42,7 @@
     page = page + 1
     const newData = await trpc.posts.list.query({
       placeId: $pageContext.context.place?.id || '',
+      authorId: $app.url.searchParams.get('user') || undefined,
       pageSize,
       filter,
       page,

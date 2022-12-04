@@ -1,5 +1,5 @@
-import { Prisma, prisma as $prisma, PrismaClient } from 'src/prisma.js'
-import type { Overwrite, Page, Post, TrimProps } from 'src/types.js'
+import { Prisma, prisma as $prisma } from 'src/prisma.js'
+import type { Overwrite, Page, Post, TrimProps, User } from 'src/types.js'
 
 export type CreatePostInput = TrimProps<
   Post,
@@ -72,6 +72,7 @@ export async function getPost(
         CommentOnPost: number
         likes: number
       }
+      author: User | null
     })
   | null
 > {
@@ -80,6 +81,7 @@ export async function getPost(
       id: postId,
     },
     include: {
+      author: true,
       _count: {
         select: {
           CommentOnPost: true,
@@ -92,6 +94,7 @@ export async function getPost(
 
 export type ListPostsInput = {
   placeId: string
+  authorId?: string | null
   ids?: string[]
   filter?: string
   page: number
@@ -99,7 +102,7 @@ export type ListPostsInput = {
 }
 
 export async function listPosts(
-  { page, placeId, pageSize, ids, filter }: ListPostsInput,
+  { page, placeId, pageSize, ids, filter, authorId }: ListPostsInput,
   prisma = $prisma
 ): Promise<
   Page<
@@ -108,6 +111,7 @@ export async function listPosts(
         CommentOnPost: number
         likes: number
       }
+      author: User | null
     }
   >
 > {
@@ -136,6 +140,7 @@ export async function listPosts(
     ]
   const where: Prisma.PostWhereInput = {
     placeId,
+    authorId,
     AND,
   }
   const [count, items] = await prisma.$transaction([
@@ -151,6 +156,7 @@ export async function listPosts(
             likes: true,
           },
         },
+        author: true,
       },
       orderBy: {
         createdAt: 'desc',

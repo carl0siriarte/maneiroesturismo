@@ -6,6 +6,7 @@
   let value = ''
   export let postId: string
   export let replyToId: string | undefined = undefined
+  export let origin: 'post' | 'event'
   $: count = value.length
   let publishing = false
 
@@ -18,7 +19,8 @@
       const comment = await trpc.comments.create.mutate({
         content: value,
         replyToId,
-        postId,
+        originId: postId,
+        origin,
       })
       dispatch('create', comment)
       value = ''
@@ -71,7 +73,7 @@
   .text-block :global(h1),
   .text-block :global(h2),
   .text-block :global(h3) {
-    @apply font-bold font-title;
+    @apply font-bold;
   }
 
   .text-block :global(h1) {
