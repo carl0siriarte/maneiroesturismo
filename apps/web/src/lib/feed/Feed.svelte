@@ -172,7 +172,7 @@
 
 {#if coverImage}
   <div
-    class="bg-gradient-to-br bg-center bg-cover flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
+    class="bg-gradient-to-br bg-center bg-cover flex from-green-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
     bind:clientHeight={coverHeight}
     style="background-image: url({useCaravaggioBuilder()(coverImage, {
       rs: {
@@ -246,7 +246,7 @@
   </div>
 {:else}
   <div
-    class="bg-gradient-to-br bg-center bg-cover flex from-purple-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
+    class="bg-gradient-to-br bg-center bg-cover flex from-green-800 to-sky-300 h-40vh w-full p-4 relative lg:px-[20%] dark:(from-cool-gray-600 to-cool-gray-900) "
     bind:clientHeight={coverHeight}
   >
     {#if editable}
