@@ -8,7 +8,7 @@
 </script>
 
 <div
-  class="bg-gradient-to-br flex h-screen from-green-800 to-sky-300 text-center w-full p-4 items-center justify-center dark:(from-cool-gray-600 to-cool-gray-900) "
+  class="bg-gradient-to-br flex h-screen from-green-800 to-sky-600 text-center w-full p-4 items-center justify-center dark:(from-cool-gray-600 to-cool-gray-900) "
 >
   <div
     class="bg-white rounded-xl flex flex-col shadow-xl p-4 items-center dark:bg-dark-800"
