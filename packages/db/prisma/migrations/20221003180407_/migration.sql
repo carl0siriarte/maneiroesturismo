@@ -72,7 +72,7 @@ CREATE TABLE "Post" (
 CREATE TABLE "PlaceMember" (
     "placeId" TEXT NOT NULL,
     "memberId" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'regular',
+    "role" TEXT NOT NULL DEFAULT 'facilitador',
 
     CONSTRAINT "PlaceMember_pkey" PRIMARY KEY ("memberId","placeId")
 );

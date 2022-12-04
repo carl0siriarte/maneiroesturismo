@@ -65,7 +65,7 @@ const mutations = t.router({
         memberId: ctx.userId || '',
         placeId: input.id,
       })
-      if (!role || role == 'regular') {
+      if (!role || role == 'facilitador') {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message:
@@ -79,7 +79,7 @@ const mutations = t.router({
       memberId: ctx.userId || '',
       placeId: input,
     })
-    if (!role || role != 'owner') {
+    if (!role || role != 'administrador') {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Este usuario no tiene los permisos necesarios para eliminar',

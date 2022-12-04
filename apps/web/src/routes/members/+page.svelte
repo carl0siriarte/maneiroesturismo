@@ -64,7 +64,7 @@
           />
         </label>
       </div>
-      {#if currentRole != 'regular'}
+      {#if currentRole != 'facilitador'}
         <div class="flex space-x-4 items-center">
           <label class="flex flex-col space-y-2 w-full">
             <span class="font-bold text-xs">Rol</span>
@@ -74,11 +74,11 @@
               required
             >
               <option value="" hidden>Ej. Admin</option>
-              {#if currentRole == 'owner'}
-                <option value="owner">Owner</option>
+              {#if currentRole == 'administrador'}
+                <option value="administrador">Owner</option>
               {/if}
-              <option value="admin">Admin</option>
-              <option value="regular">Regular</option>
+              <option value="emprendedor">Admin</option>
+              <option value="facilitador">Regular</option>
             </select>
           </label>
         </div>

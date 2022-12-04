@@ -28,7 +28,7 @@ export async function createPlace(
       PlaceMember: {
         create: {
           memberId: userOwnerId,
-          role: 'owner',
+          role: 'administrador',
         },
       },
     },

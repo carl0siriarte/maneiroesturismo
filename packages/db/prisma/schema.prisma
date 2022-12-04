@@ -140,7 +140,7 @@ model PlaceMember {
   placeId  String
   memberId String
 
-  role String @default("regular") // owner | admin | regular
+  role String @default("facilitador") // administrador | emprendedor | facilitador
 
   @@id([memberId, placeId])
 }

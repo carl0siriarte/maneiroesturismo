@@ -22,9 +22,9 @@ export type Comment = _Comment & {
 }
 
 export const PlaceMemberRole = {
-  owner: 'owner' as const,
-  admin: 'admin' as const,
-  regular: 'regular' as const,
+  administrador: 'administrador' as const,
+  emprendedor: 'emprendedor' as const,
+  facilitador: 'facilitador' as const,
 }
 
 export type PlaceMemberRole =

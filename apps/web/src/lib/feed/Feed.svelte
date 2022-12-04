@@ -495,9 +495,9 @@
             <div class="flex flex-col space-y-2">
               <div class="flex space-x-4 items-center">
                 <div
-                  class="bg-white rounded-full flex border-2 border-gray-300 min-h-12 min-w-12 items-center justify-center dark:bg-dark-400 dark:border-dark-100"
+                  class="bg-gradient-to-br border rounded-full cursor-pointer flex font-bold font-title from-green-300 to-pink-600 border-gray-200 h-32px text-white text-xs leading-[0] w-32px items-center justify-center uppercase dark:bg-gray-600 dark:from-green-400 dark:to-pink-700"
                 >
-                  <Image16 />
+                  {user?.name?.[0] || '...'}
                 </div>
                 <div class="flex flex-col">
                   <h2 class="font-bold text-xs">Filtrando resultados</h2>
@@ -541,7 +541,7 @@
   </div>
   {#key feedPage}
     <div
-      class="flex flex-col w-full px-4 pb-4 lg:px-[20%]"
+      class="flex flex-col w-full px-4 pb-16 lg:px-[20%]"
       in:fade={{ duration: 600, easing: expoOut }}
       class:pt-152px={scrollY >= coverHeight && mounted}
       class:!lg:pt-104px={scrollY >= coverHeight && mounted}

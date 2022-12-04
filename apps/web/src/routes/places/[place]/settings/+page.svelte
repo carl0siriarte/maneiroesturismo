@@ -110,7 +110,7 @@
         class="rounded-lg font-bold border-2 border-blue-500 text-sm py-2 px-2 transform-gpu text-blue-500 duration-200 hover:shadow disabled:cursor-not-allowed disabled:opacity-70 not-disabled:hover:-translate-y-px "
         type="submit">Guardar cambios</button
       >
-      {#if data.role == 'owner'}
+      {#if data.role == 'administrador'}
         <button
           type="button"
           class="rounded-lg font-bold border-2 border-red-500 text-sm py-2 px-2 transform-gpu text-red-500 duration-200 hover:shadow disabled:cursor-not-allowed disabled:opacity-70 not-disabled:hover:-translate-y-px "
