@@ -13,9 +13,6 @@
     Sun24,
     Home16,
     UserMultiple16,
-    UserAccess16,
-    UserProfile16,
-    UserCertification16,
     Forum16,
     ReportData16,
   } from 'carbon-icons-svelte'
