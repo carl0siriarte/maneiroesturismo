@@ -17,6 +17,7 @@
     UserProfile16,
     UserCertification16,
     Forum16,
+    ReportData16,
   } from 'carbon-icons-svelte'
   import { expoOut } from 'svelte/easing'
   import { slide } from 'svelte/transition'
@@ -40,6 +41,11 @@
       href: '/contact',
       icon: Forum16,
       title: 'Contacto',
+    },
+    {
+      href: '/reports',
+      icon: ReportData16,
+      title: 'Reportes',
     },
     {
       href: '/settings',
