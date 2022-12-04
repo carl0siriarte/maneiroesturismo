@@ -43,7 +43,7 @@
       title: 'Contacto',
     },
     {
-      href: '/reports',
+      href: '/settings',
       icon: ReportData16,
       title: 'Reportes',
     },
