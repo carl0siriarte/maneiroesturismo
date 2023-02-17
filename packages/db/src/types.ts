@@ -18,7 +18,9 @@ export type Place = _Place
 
 export type User = _User
 
-export type ContactMessage = _ContactMessage
+export type ContactMessage = _ContactMessage & {
+  author: User | null
+}
 
 export type Comment = _Comment & {
   author: User | null

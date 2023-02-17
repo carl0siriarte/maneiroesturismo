@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "patch-package": "^6.4.7",
+    "prettier": "^2.8.1",
+    "prettier-plugin-svelte": "^2.9.0",
     "turbo": "^1.4.3"
   }
 }

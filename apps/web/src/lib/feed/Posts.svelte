@@ -68,6 +68,7 @@
             likes: 0,
           },
           liked: false,
+          author: null,
         },
         ...(data?.items || []),
       ],

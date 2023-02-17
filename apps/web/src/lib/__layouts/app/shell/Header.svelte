@@ -40,7 +40,7 @@
       title: 'Contacto',
     },
     {
-      href: '/settings',
+      href: '/reports',
       icon: ReportData16,
       title: 'Reportes',
     },

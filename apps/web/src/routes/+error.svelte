@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { pageContext } from '$lib'
   import { tooltip } from '$lib/components/tooltip'
   import { Copy16 } from 'carbon-icons-svelte'
 </script>

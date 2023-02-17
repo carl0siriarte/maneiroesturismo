@@ -6,6 +6,10 @@
   import { scale, slide } from 'svelte/transition'
   let error: Error | undefined = undefined
   let value = ''
+
+  function publish() {
+    //trpc
+  }
 </script>
 
 <div class="flex flex-grow h-full w-full pt-8 items-center justify-center">
