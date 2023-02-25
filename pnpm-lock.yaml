@@ -77,6 +77,7 @@ importers:
       '@supabase/supabase-js': ^1.35.3
       '@sveltejs/adapter-vercel': 1.0.0-next.84
       '@sveltejs/kit': 1.0.0-next.560
+      '@sveltejs/pancake': ^0.0.18
       '@sveltejs/svelte-virtual-list': ^3.0.1
       '@tiptap/core': ^2.0.0-beta.182
       '@tiptap/extension-bullet-list': ^2.0.0-beta.29
@@ -143,6 +144,7 @@ importers:
       '@pkg/trpc': link:../../packages/trpc
       '@stripe/stripe-js': 1.35.0
       '@supabase/supabase-js': 1.35.6_encoding@0.1.13
+      '@sveltejs/pancake': 0.0.18
       '@sveltejs/svelte-virtual-list': 3.0.1
       '@tiptap/core': 2.0.0-beta.182
       '@tiptap/extension-bullet-list': 2.0.0-beta.29_jdrcmhoxj44u3cq7gnenksjiqq
@@ -993,6 +995,12 @@ packages:
       - diff-match-patch
       - supports-color
     dev: true
+
+  /@sveltejs/pancake/0.0.18:
+    resolution: {integrity: sha512-vnpKn+sHE0yvw/6x4juF9EoDS8iYC5JNIVtRgclA37rfxdnIpvbVxStiZ5/gWncjERN4jtSpTAplS1zCARCBXA==}
+    dependencies:
+      yootils: 0.0.16
+    dev: false
 
   /@sveltejs/svelte-virtual-list/3.0.1:
     resolution: {integrity: sha512-aF9TptS7NKKS7/TqpsxQBSDJ9Q0XBYzBehCeIC5DzdMEgrJZpIYao9LRLnyyo6SVodpapm2B7FE/Lj+FSA5/SQ==}
@@ -6127,6 +6135,10 @@ packages:
   /yaml/1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
+
+  /yootils/0.0.16:
+    resolution: {integrity: sha512-aIVecm5ucOzwhtKbl0zkfg0ZSOUR9c2da0k8cIc9umjjzkvVCWUUX/UHZ1CLPsv4wmJLqt0aWeLB7p9n9JDwYQ==}
+    dev: false
 
   /z-schema/5.0.3:
     resolution: {integrity: sha512-sGvEcBOTNum68x9jCpCVGPFJ6mWnkD0YxOcddDlJHRx3tKdB2q8pCHExMVZo/AV/6geuVJXG7hljDaWG8+5GDw==}

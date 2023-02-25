@@ -17,11 +17,13 @@
   export let data: RouterTypes['posts']['list']['output'] | undefined =
     undefined
   let fetching = false
+  export let ids: string[] | undefined = undefined
 
   export let pageSize = 10
   export let filter = ''
 
   let waitTimeout: NodeJS.Timeout
+  export let showMoreButton = true
 
   $: $app.url.searchParams.get('user'), search(filter)
 
@@ -46,6 +48,7 @@
       pageSize,
       filter,
       page,
+      ids,
     })
     const merged = [...(data?.items || []), ...newData.items]
     // const unique = new Set(merged.map(i => i.id))
@@ -119,7 +122,7 @@
           <ArrowDown24 />
         </button>
       </div>
-    {:else if !fetching && data}
+    {:else if !fetching && data && showMoreButton}
       <div
         class="flex flex-col space-y-2 w-full text-gray-500 justify-center items-center"
       >

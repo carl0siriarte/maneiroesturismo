@@ -121,13 +121,13 @@ const getPost = procedure.input(getPostInput).query(async ({ input, ctx }) => {
   if (!post) return null
   const liked = ctx.userId
     ? await ctx.prisma.postLike.findUnique({
-        where: {
-          authorId_postId: {
-            authorId: ctx.userId,
-            postId: post.id || '',
-          },
+      where: {
+        authorId_postId: {
+          authorId: ctx.userId,
+          postId: post.id || '',
         },
-      })
+      },
+    })
     : false
   return {
     ...post,

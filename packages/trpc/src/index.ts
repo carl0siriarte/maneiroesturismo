@@ -15,6 +15,7 @@ import posts from './handlers/posts.js'
 import comments from './handlers/comments.js'
 import events from './handlers/events.js'
 import contact from './handlers/contact.js'
+import reports from './handlers/reports.js'
 
 export const router = t.router({
   users,
@@ -23,6 +24,7 @@ export const router = t.router({
   comments,
   events,
   contact,
+  reports,
 })
 
 export type tRPCRouter = typeof router

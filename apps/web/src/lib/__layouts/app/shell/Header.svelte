@@ -148,6 +148,12 @@
     }
   }
 
+  @media print {
+    header {
+      display: none;
+    }
+  }
+
   .dock {
     @apply flex w-full justify-between;
   }
