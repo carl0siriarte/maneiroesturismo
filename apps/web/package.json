@@ -13,7 +13,6 @@
     "sync": "svelte-kit sync"
   },
   "devDependencies": {
-    "@poppanator/sveltekit-svg": "^0.2.3",
     "@sveltejs/adapter-vercel": "1.0.0-next.84",
     "@sveltejs/kit": "1.0.0-next.560",
     "@windicss/plugin-animations": "^1.0.9",
