@@ -23,7 +23,7 @@
     "migrate:fly": "./migrate.sh"
   },
   "overrides": {
-    "string-width": "7.1.0"
+    "string-width": "4.2.3"
   },
   "devDependencies": {
     "patch-package": "^6.4.7",
