@@ -6,7 +6,7 @@ import { optimizeImports } from 'carbon-preprocess-svelte'
 const config = {
   preprocess: [preprocess(), optimizeImports()],
   kit: {
-    adapter: vercel({ edge: true }),
+    adapter: vercel({ runtime: 'edge' }),
     env: {
       dir: '../../',
     },

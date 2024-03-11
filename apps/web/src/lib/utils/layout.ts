@@ -51,7 +51,7 @@ export async function fetchPlaceFromURL(
   const subdomain = url.host.split('.')[0]
   let slug = url.searchParams.get('__place') || subdomain || null
   if (slug) {
-    return (await trpc.places.get.query({ slug: subdomain })) || {}
+    return (await trpc.places.get.query({ slug: slug })) || {}
   }
 
   return {}
