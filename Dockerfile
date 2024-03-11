@@ -2,7 +2,7 @@
 # FROM flyio/litefs:pr-89 AS litefs
 
 # Add lockfile and package.json's of isolated subworkspace
-FROM node:alpine AS installer
+FROM node:20-alpine AS installer
 
 ARG PUBLIC_SUPABASE_URL
 ARG PUBLIC_SUPABASE_ANON_KEY
