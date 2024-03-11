@@ -31,8 +31,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
-RUN npm run build:api
+RUN npm i -g bun
+
+RUN bun install
+RUN bun run build:api
 
 FROM node:alpine AS runner
 

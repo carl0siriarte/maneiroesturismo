@@ -9,11 +9,11 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "release": "npm run db:push && npm run build",
+    "release": "bun run db:push && bun run build",
     "build:api": "turbo run build --scope=api",
     "build:web": "turbo run build --scope=web",
     "build:lib": "turbo run build --filter='./packages/*'",
-    "dev": "npm run build:lib && turbo run dev --parallel --scope=api --scope=web",
+    "dev": "bun run build:lib && turbo run dev --parallel --scope=api --scope=web",
     "dev:api": "turbo run dev --parallel --filter='./apps/api'",
     "dev:web": "turbo run dev --continue --scope=web",
     "dev:lib": "turbo run dev --filter='./packages/*' --parallel",

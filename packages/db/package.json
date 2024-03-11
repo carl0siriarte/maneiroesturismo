@@ -22,7 +22,7 @@
     "generate": "prisma generate",
     "db:push": "cp ../../.env . && prisma migrate deploy && rm .env",
     "lint": "eslint ./src --fix",
-    "prebuild": "npm run generate",
+    "prebuild": "bun run generate",
     "predev": "tsup",
     "studio": "prisma studio"
   },
