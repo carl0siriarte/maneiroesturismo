@@ -8,6 +8,5 @@ export default defineConfig({
   format: ['esm'],
   target: 'node16',
   minify: isProduction,
-  skipNodeModulesBundle: true,
   sourcemap: true,
 })
