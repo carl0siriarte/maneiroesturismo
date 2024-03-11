@@ -4,17 +4,16 @@
     "apps/*",
     "packages/*"
   ],
-  "packageManager": "^pnpm@7.9.4",
   "prisma": {
     "schema": "packages/db/prisma/schema.prisma"
   },
   "scripts": {
     "build": "turbo run build",
-    "release": "pnpm run db:push && pnpm run build",
+    "release": "npm run db:push && npm run build",
     "build:api": "turbo run build --scope=api",
     "build:web": "turbo run build --scope=web",
     "build:lib": "turbo run build --filter='./packages/*'",
-    "dev": "pnpm run build:lib && turbo run dev --parallel --scope=api --scope=web",
+    "dev": "npm run build:lib && turbo run dev --parallel --scope=api --scope=web",
     "dev:api": "turbo run dev --parallel --filter='./apps/api'",
     "dev:web": "turbo run dev --continue --scope=web",
     "dev:lib": "turbo run dev --filter='./packages/*' --parallel",

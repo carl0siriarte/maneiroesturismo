@@ -31,10 +31,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm i -g pnpm
-
-RUN pnpm install
-RUN pnpm run build:api
+RUN npm install
+RUN npm run build:api
 
 FROM node:alpine AS runner
 
