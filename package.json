@@ -22,6 +22,9 @@
     "start:fly": "node apps/api/dist/index.js",
     "migrate:fly": "./migrate.sh"
   },
+  "overrides": {
+    "string-width": "7.1.0"
+  },
   "devDependencies": {
     "patch-package": "^6.4.7",
     "prettier": "^2.8.1",
